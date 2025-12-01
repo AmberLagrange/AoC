@@ -1,0 +1,17 @@
+#ignore all
+*
+
+#unignore files with extensions
+!*.*
+
+#unignore directories
+!*/
+
+#reignore object, static libraries and shared libraries
+*.o
+*.a
+*.so
+
+#reignore these files no matter what
+input
+input.xxd
