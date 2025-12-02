@@ -1,7 +1,7 @@
 extern int main(int argc, char **argv);
 extern void exit(int status);
 
-void __attribute((naked)) _start() {
+void __attribute__((naked)) _start(void) {
 	
 	__asm__ volatile (
 		"movl (%rsp), %edi\n\t"

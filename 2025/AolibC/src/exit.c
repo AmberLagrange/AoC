@@ -1,4 +1,4 @@
-#include "../include/syscall.h"
+#include <syscall.h>
 
 void exit(int status) {
 	
