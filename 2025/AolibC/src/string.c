@@ -40,7 +40,7 @@ int strcmp(const char *lhs, const char *rhs) {
 char *strncpy(char *dst, const char *src, unsigned long count) {
 	
 	unsigned int i = 0;
-	while (*src && i < count) {
+	while (src[i] && i < count) {
 		
 		dst[i] = src[i];
 		++i;
