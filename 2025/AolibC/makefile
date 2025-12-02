@@ -35,9 +35,7 @@ clean:
 	rm -f $(TEST_BIN)
 	$(MAKE) -C $(START_MAIN) clean
 
-all:
-	$(MAKE) $(LIB_DIR)/$(LIB_NAME)
-	$(MAKE) $(LIB_DIR)/$(START_MAIN).a
+all: $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a
 
 remake: clean dirs all
 
