@@ -15,4 +15,6 @@ all: part_1 part_2
 clean:
 	rm -f part_1 part_2
 
-.PHONY: all clean
+remake: clean all
+
+.PHONY: all clean remake

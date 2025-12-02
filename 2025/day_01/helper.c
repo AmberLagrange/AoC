@@ -1,22 +1,11 @@
 #include "helper.h"
 
-void putc(char c) {
-	
-	__syscall_3(SYS_WRITE, 0, (u64)(&c), 1);
-}
-
-void print_str(char *str) {
-	
-	char c;
-	while((c = *str++)) {
-		putc(c);
-	}
-}
+#include <stdio.h>
 
 void print_num(int num) {
 
 	if (num == 0) {
-		print_str("0\n");
+		puts("0\n");
 		return;
 	}
 

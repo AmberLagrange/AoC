@@ -1,7 +1,10 @@
 #include <fcntl.h>
+#include <stdio.h>
 #include <unistd.h>
 
 #include "helper.h"
+
+#define INPUT_BUF_SIZE 32 * 1024
 
 int is_valid(const char *str) {
 	
@@ -56,8 +59,6 @@ u64 check_ranges(const char *range) {
 		if (!is_valid(int_to_str(i, buf))) {
 			
 			sum += i;
-			print_num(i);
-			puts(" is invalid.\n", 13);
 		}
 	}
 
@@ -70,6 +71,7 @@ int main(int argc, char **argv) {
 	
 	if (argc < 2) {
 		
+		puts("Please provide a file.\n");
 		status = -1;
 		goto quit;
 	}
@@ -77,24 +79,20 @@ int main(int argc, char **argv) {
 	int fd = open(argv[1], O_RDONLY, 0);
 	if (fd < 0) {
 		
-		const char *err_msg = "Error: could not open the file.\n";
-		puts(err_msg, strlen(err_msg));
-		
+		puts("Error: could not open the file.\n");
 		status = -2;
 		goto quit;
 	}
 	
-	char buf[1024];
-	int count = read(fd, buf, sizeof(buf));
-	if (count < 0) {
+	char buf[INPUT_BUF_SIZE];
+	ssize_t read_count = read(fd, buf, sizeof(buf));
+	if (read_count < 0) {
 		
-		const char *err_msg = "Error: could not read from the file.\n";
-		puts(err_msg, strlen(err_msg));
-		
+		puts("Error: could not read from the file.\n");
 		status = -3;
 		goto close;
 	}
-	buf[count - 1] = '\0'; // Strip trailing newline
+	buf[read_count - 1] = '\0'; // Strip trailing newline
 	
 	u64 sum = 0;
 	char *range = strtok(buf, ",");
@@ -104,7 +102,7 @@ int main(int argc, char **argv) {
 		range = strtok(NULL, ",");
 	}
 	
-	puts("The total sum is: ", 18);
+	puts("The total sum is: ");
 	print_num(sum);
 	putc('\n');
 	

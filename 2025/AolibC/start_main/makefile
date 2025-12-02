@@ -13,7 +13,7 @@ START_MAIN := start_main
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -static -nostdlib -nostdinc -I$(INC_DIR) -c $< -o $@
 
-$(LIB_DIR)/$(START_MAIN).a : $(OBJS)
+$(LIB_DIR)/$(START_MAIN).a: $(OBJS)
 	ar rcs $@ $(OBJS)
 
 dirs:
@@ -24,5 +24,7 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -f $(LIB_DIR)/$(START_MAIN).a
 
-.PHONY: dirs clean
+remake: clean dirs $(LIB_DIR)/$(START_MAIN).a
+
+.PHONY: dirs clean remake
 

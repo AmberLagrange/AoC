@@ -15,7 +15,6 @@
 *.a
 *.so
 
-#reignore these files no matter what
+#reignore these input and test files
 input
-input.xxd
 test.txt

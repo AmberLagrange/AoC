@@ -5,7 +5,7 @@ INC_DIR   ?= ./include
 BUILD_DIR ?= ./build
 LIB_DIR   ?= ./libs
 
-SRCS := $(SRC_DIR)/exit.c $(SRC_DIR)/fcntl.c $(SRC_DIR)/stack_chk_fail.c $(SRC_DIR)/syscall.c $(SRC_DIR)/unistd.c
+SRCS := $(SRC_DIR)/exit.c $(SRC_DIR)/fcntl.c $(SRC_DIR)/stack_chk_fail.c $(SRC_DIR)/syscall.c $(SRC_DIR)/unistd.c $(SRC_DIR)/string.c $(SRC_DIR)/stdio.c
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 LIB_NAME   := AolibC.so
@@ -13,7 +13,7 @@ START_MAIN := start_main
 TEST_BIN   := main
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS) -nostdlib -nostdinc -I$(INC_DIR) -c $< -o $@
+	$(CC) -fPIC $(CFLAGS) -nostdlib -nostdinc -I$(INC_DIR) -c $< -o $@
 
 $(LIB_DIR)/$(LIB_NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -shared -nostdlib -nostdinc $(OBJS) -o $@
@@ -31,9 +31,15 @@ dirs:
 
 clean:
 	rm -rf $(BUILD_DIR)
-	rm -rf $(LIB_DIRZ)
+	rm -rf $(LIB_DIR)
 	rm -f $(TEST_BIN)
 	$(MAKE) -C $(START_MAIN) clean
 
-.PHONY: dirs clean
+all:
+	$(MAKE) $(LIB_DIR)/$(LIB_NAME)
+	$(MAKE) $(LIB_DIR)/$(START_MAIN).a
+
+remake: clean dirs all
+
+.PHONY: dirs clean all remake
 

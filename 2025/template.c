@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "helper.h"
-
 #define INPUT_BUF_SIZE 32 * 1024
 
 int main(int argc, char **argv) {
@@ -34,41 +32,8 @@ int main(int argc, char **argv) {
 		goto close;
 	}
 	
-	int  val   = 0;
-	char dir   = '0';
-	int  dial  = 50;
-	int  count = 0;
-	
-	for (ssize_t i = 0; i < read_count; ++i) {
-		
-		char c = buf[i];
-		
-		if (c == '\n') {
-			
-			if (dir == 'L') {
-				dial -= val;
-				dial += 100;	
-			} else if (dir == 'R') {
-				dial += val;
-			}
-			dial = dial % 100;
-			
-			if (dial == 0) {
-				++count;
-			}
-			
-			val = 0;
-		} else if (c == 'L' || c == 'R') {
-			dir = c;
-		} else {
-			val *= 10;
-			val += (c - '0');
-		}
-		
-	}
-	
-	puts("The password is: ");
-	print_num(count);
+	puts("The answer is: ");
+	putc('\n');
 	
 close:
 	close(fd);

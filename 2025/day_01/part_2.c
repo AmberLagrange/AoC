@@ -1,19 +1,47 @@
-#include "input.xxd"
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
 
 #include "helper.h"
 
-int main(void) {
+#define INPUT_BUF_SIZE 32 * 1024
+
+int main(int argc, char **argv) {
+	
+	int status = 0;
+	
+	if (argc < 2) {
+		
+		puts("Please provide a file.\n");
+		status = -1;
+		goto quit;
+	}
+	
+	int fd = open(argv[1], O_RDONLY, 0);
+	if (fd < 0) {
+		
+		puts("Error: could not open the file.\n");
+		status = -2;
+		goto quit;
+	}
+	
+	char buf[INPUT_BUF_SIZE];
+	ssize_t read_count = read(fd, buf, sizeof(buf));
+	if (read_count < 0) {
+		
+		puts("Error: could not read from the file.\n");
+		status = -3;
+		goto close;
+	}
 	
 	int  val   = 0;
 	char dir   = '0';
 	int  dial  = 50;
 	int  count = 0;
 	
-	char c;
-	
-	for (unsigned int i = 0; i < input_len; ++i) {
+	for (ssize_t i = 0; i < read_count; ++i) {
 		
-		c = input[i];
+		char c = buf[i];
 		
 		if (c == '\n') {
 			
@@ -47,7 +75,13 @@ int main(void) {
 		
 	}
 	
+	puts("The password is: ");
 	print_num(count);
-	return 0;
+	
+close:
+	close(fd);
+	
+quit:
+	return status;
 }
 
