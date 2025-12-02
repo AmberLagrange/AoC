@@ -25,3 +25,4 @@ clean:
 	rm -f $(LIB_DIR)/$(START_MAIN).a
 
 .PHONY: dirs clean
+
