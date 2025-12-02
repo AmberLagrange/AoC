@@ -53,7 +53,7 @@ int strcmp(const char *str_1, const char *str_2) {
 
 char *strncpy(char *dst, const char *src, unsigned long count) {
 	
-	int i = 0;
+	unsigned int i = 0;
 	while (*src && i < count) {
 		
 		dst[i] = src[i];
