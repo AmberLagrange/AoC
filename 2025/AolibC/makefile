@@ -10,7 +10,7 @@ OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 LIB_NAME   := AolibC.so
 START_MAIN := start_main
-TEST_BIN   := main
+TEST_BIN   := test
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -fPIC $(CFLAGS) -nostdlib -nostdinc -I$(INC_DIR) -c $< -o $@
@@ -35,9 +35,11 @@ clean:
 	rm -f $(TEST_BIN)
 	$(MAKE) -C $(START_MAIN) clean
 
-all: $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a
+libs: $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a
 
-remake: clean dirs all
+all: libs $(TEST_BIN)
+
+remake: clean dirs libs all
 
 .PHONY: dirs clean all remake
 
