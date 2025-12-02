@@ -125,18 +125,18 @@ int main(int argc, char **argv) {
 		goto quit;
 	}
 	
-	char buf[INPUT_BUF_SIZE];
-	ssize_t file_count = read(fd, buf, sizeof(buf));
+	char input_buf[INPUT_BUF_SIZE];
+	ssize_t file_count = read(fd, input_buf, sizeof(input_buf));
 	if (file_count < 0) {
 		
 		puts("Error: could not read from the file.\n");
 		status = -3;
 		goto close;
 	}
-	buf[file_count - 1] = '\0'; // Strip trailing newline
+	input_buf[file_count - 1] = '\0'; // Strip trailing newline
 	
 	u64 sum = 0;
-	char *range = strtok(buf, ",");
+	char *range = strtok(input_buf, ",");
 	while (range != NULL) {
 		
 		sum += check_ranges(range);

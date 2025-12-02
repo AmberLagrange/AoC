@@ -25,8 +25,8 @@ int main(int argc, char **argv) {
 		goto quit;
 	}
 	
-	char buf[INPUT_BUF_SIZE];
-	ssize_t read_count = read(fd, buf, sizeof(buf));
+	char input_buf[INPUT_BUF_SIZE];
+	ssize_t read_count = read(fd, input_buf, sizeof(input_buf));
 	if (read_count < 0) {
 		
 		puts("Error: could not read from the file.\n");
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 	
 	for (ssize_t i = 0; i < read_count; ++i) {
 		
-		char c = buf[i];
+		char c = input_buf[i];
 		
 		if (c == '\n') {
 			
