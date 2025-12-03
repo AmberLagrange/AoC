@@ -24,18 +24,18 @@ dirs:
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) dirs
 
 clean:
-	$(RM) -rf $(BUILD_DIR)
-	$(RM) -rf $(DEP_DIR)
-	$(RM) -rf $(LIB_DIR)
-	$(RM)  -f $(TEST_BIN)
+	$(RM) -r $(BUILD_DIR)
+	$(RM) -r $(DEP_DIR)
+	$(RM) -r $(LIB_DIR)
+	$(RM)    $(TEST_BIN)
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) clean
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	@set -e; \
-	$(RM) -f $(DEP_DIR)/$(*F)/d; \
+	set -e; \
+	$(RM) $(DEP_DIR)/$(*F).d; \
 	$(CC) -fPIC $(CFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
-	$(RM) -f $@.$$$$
+	$(RM) $@.$$$$
 
 $(LIB_DIR)/$(LIB_NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -shared -nostdlib -nostdinc $(OBJS) -o $@
@@ -47,11 +47,11 @@ libs: $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $(LIB_DIR)/$(START_MAIN).a
 
 $(TEST_BIN): $(TEST_BIN).c
-	@set -e;
-	$(RM) -f $(DEP_DIR)/$@.d; \
+	set -e;
+	$(RM) $(DEP_DIR)/$@.d; \
 	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) $(PWD)/$< $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a -o $(PWD)/$@ > $@.$$$$; \
 	sed 's#$@:#$@ $(DEP_DIR)/$@.d:#' < $@.$$$$ > $(DEP_DIR)/$@.d; \
-	$(RM) -f $@.$$$$
+	$(RM) $@.$$$$
 
 all: libs $(TEST_BIN)
 
