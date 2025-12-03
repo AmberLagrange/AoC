@@ -10,7 +10,8 @@
 #unignore directories
 !*/
 
-#reignore dependencies, objects, static libraries and shared libraries
+#reignore precompiled headers, dependencies, objects, static libraries and shared libraries
+*.pch
 *.d
 *.o
 *.a

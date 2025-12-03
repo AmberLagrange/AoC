@@ -7,7 +7,7 @@ typedef struct {
 	int fd;
 } FILE;
 
-int putc(const char c, FILE *file);
+int putc(int c, FILE *file);
 
 int puts(const char *str);
 

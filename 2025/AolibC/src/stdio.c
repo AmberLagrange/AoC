@@ -9,7 +9,7 @@ static FILE __stderr = {2};
 
 FILE *__files[FOPEN_MAX] = { &__stdin, &__stdout, &__stderr };
 
-int putc(const char c, FILE *file) {
+int putc(int c, FILE *file) {
 	
 	return __syscall_3(SYS_WRITE, file->fd, (u64)(&c), 1);
 }
