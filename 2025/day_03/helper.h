@@ -9,8 +9,5 @@ char *reverse_str(char *str);
 
 char *int_to_str(u64 num, char *buf);
 
-int atoi(const char *str);
-long long atoll(const char *str);
-
 void print_num(u64 num);
 

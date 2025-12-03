@@ -41,36 +41,6 @@ char *int_to_str(u64 num, char *buf) {
 	return buf;
 }
 
-// Ignore negatives for now
-int atoi(const char *str) {
-	
-	int value = 0;
-	char c;
-	while ((c = *str)) {
-		
-		value *= 10;
-		value += (int)(c - '0');
-		++str;
-	}
-	
-	return value;
-}
-
-long long atoll(const char *str) {
-	
-	long long value = 0;
-	char c;
-	while ((c = *str)) {
-		
-		value *= 10;
-		value += (long long)(c - '0');
-		++str;
-	}
-	
-	return value;
-}
-
-
 void print_num(u64 num) {
 	
 	char buf[MAX_STR_LEN];
