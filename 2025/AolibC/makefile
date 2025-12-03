@@ -31,7 +31,11 @@ clean:
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) clean
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) -fPIC $(CFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF $(DEP_DIR)/$(*F).d -I$(INC_DIR) -c $< -o $@
+	@set -e; \
+	$(RM) -f $(DEP_DIR)/$(*F)/d; \
+	$(CC) -fPIC $(CFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
+	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
+	$(RM) -f $@.$$$$
 
 $(LIB_DIR)/$(LIB_NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -shared -nostdlib -nostdinc $(OBJS) -o $@
@@ -46,8 +50,8 @@ $(TEST_BIN): $(TEST_BIN).c
 	@set -e;
 	$(RM) -f $(DEP_DIR)/$@.d; \
 	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) $(PWD)/$< $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a -o $(PWD)/$@ > $@.$$$$; \
-	sed 's/$@:/$@ $(DEP_DIR)/$@.d:/' < $@.$$$$ > $(DEP_DIR)/$@.d; \
-	$(RM) $@.$$$$
+	sed 's#$@:#$@ $(DEP_DIR)/$@.d:#' < $@.$$$$ > $(DEP_DIR)/$@.d; \
+	$(RM) -f $@.$$$$
 
 all: libs $(TEST_BIN)
 

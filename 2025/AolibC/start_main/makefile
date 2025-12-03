@@ -11,7 +11,11 @@ DEPS := $(SRCS:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 START_MAIN := start_main
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS) -static -nostdlib -nostdinc -MD -MP -MT $@ -MF $(DEP_DIR)/$(*F).d -I$(INC_DIR) -c $< -o $@
+	@set -e; \
+	$(RM) -f $(DEPS_DIR)/$(*F).d; \
+	$(CC) $(CFLAGS) -static -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
+	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
+	$(RM) -f $@.$$$$
 
 $(LIB_DIR)/$(START_MAIN).a: $(OBJS)
 	$(AR) rcs $@ $(OBJS)
