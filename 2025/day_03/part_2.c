@@ -12,15 +12,6 @@ long long find_max_joltage(const char *battery) {
 	
 	long long joltage = 0;
 	
-	char joltage_perm[JOLTAGE_DIGITS + 1];
-	joltage_perm[JOLTAGE_DIGITS] = '\0';
-	
-	size_t perm_indicies[JOLTAGE_DIGITS];
-	for (size_t index = 0; index < JOLTAGE_DIGITS; ++index) {
-		
-		perm_indicies[index] = 0;
-	}
-	
 	size_t largest_index = 0;
 	size_t bank_digits = strlen(battery);
 	for (size_t digit_index = 0; digit_index < JOLTAGE_DIGITS; ++digit_index) {
