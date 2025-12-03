@@ -22,8 +22,8 @@ void print_num(int num) {
 	}
 	
 	while (i > 0) {
-		putc(buf[--i]);
+		putc(buf[--i], stdout);
 	}
-	putc('\n');
+	putc('\n', stdout);
 }
 

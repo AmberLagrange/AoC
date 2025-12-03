@@ -18,5 +18,5 @@ char *strncpy(char *dst, const char *str, size_t count);
 
 char *strtok(char *str, const char *delims);
 
-#endif
+#endif // STRING_H
 

@@ -17,5 +17,5 @@ unsigned long __syscall_4(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10);
 unsigned long __syscall_5(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10, u64 r8);
 unsigned long __syscall_6(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10, u64 r8, u64 r9);
 
-#endif
+#endif //SYSCALL_H
 

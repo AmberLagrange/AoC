@@ -9,5 +9,5 @@ typedef int mode_t;
 
 int open(const char *filepath, int flags, mode_t mode);
 
-#endif
+#endif // FCNTL_H
 

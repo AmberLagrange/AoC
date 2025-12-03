@@ -1,9 +1,21 @@
 #ifndef STDIO_H
 #define STDIO_H
 
-int putc(const char c);
+#define FOPEN_MAX 256
+
+typedef struct {
+	int fd;
+} FILE;
+
+int putc(const char c, FILE *file);
 
 int puts(const char *str);
 
-#endif
+extern FILE *__files[FOPEN_MAX];
+
+#define stdin  __files[0]
+#define stdout __files[1]
+#define stderr __files[2]
+
+#endif // STDIO_H
 

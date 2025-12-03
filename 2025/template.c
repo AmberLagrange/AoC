@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 	}
 	
 	puts("The answer is: ");
-	putc('\n');
+	putc('\n', stdout);
 	
 close:
 	close(fd);

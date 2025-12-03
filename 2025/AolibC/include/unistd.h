@@ -17,4 +17,5 @@ ssize_t write(int file_descriptor, const void *buf, size_t count);
 
 int close(int file_descriptor);
 
-#endif
+#endif // UNISTD_H
+

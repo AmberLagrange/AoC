@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
 	
 	puts("The total sum is: ");
 	print_num(sum);
-	putc('\n');
+	putc('\n', stdout);
 	
 close:
 	close(fd);
