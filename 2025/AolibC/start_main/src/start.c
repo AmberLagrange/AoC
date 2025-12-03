@@ -1,5 +1,6 @@
+#include <stdlib.h>
+
 extern int main(int argc, char **argv);
-extern void exit(int status);
 
 void __attribute__((naked)) _start(void) {
 	

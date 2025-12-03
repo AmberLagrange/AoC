@@ -10,7 +10,8 @@
 #unignore directories
 !*/
 
-#reignore object, static libraries and shared libraries
+#reignore dependencies, objects, static libraries and shared libraries
+*.d
 *.o
 *.a
 *.so
