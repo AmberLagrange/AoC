@@ -2,18 +2,20 @@ SRC_DIR   = $(PWD)/src
 INC_DIR   = $(PWD)/include
 BUILD_DIR = $(PWD)/build
 DEP_DIR   = $(PWD)/deps
-LIB_DIR   = $(PWD)/libs
+LIB_DIR   = $(PWD)/lib
 
-SRCS := $(SRC_DIR)/fcntl.c $(SRC_DIR)/stack_chk_fail.c $(SRC_DIR)/stdio.c \
+LIB_NAME   = AolibC.so
+START_MAIN = start_main
+TEST_BIN   = test
+
+SRCS =	$(SRC_DIR)/fcntl.c $(SRC_DIR)/stack_chk_fail.c $(SRC_DIR)/stdio.c \
 		$(SRC_DIR)/stdlib.c $(SRC_DIR)/string.c $(SRC_DIR)/syscall.c \
 		$(SRC_DIR)/unistd.c
 
-OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
-DEPS := $(SRCS:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
+OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+DEPS = $(SRCS:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
-LIB_NAME   := AolibC.so
-START_MAIN := start_main
-TEST_BIN   := test
+DEPS += $(DEP_DIR)/$(TEST_BIN).d
 
 dirs:
 	mkdir -p $(BUILD_DIR)
@@ -40,10 +42,12 @@ $(LIB_DIR)/$(START_MAIN).a:
 libs: $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $(LIB_DIR)/$(START_MAIN).a
 
-$(TEST_BIN): $(TEST_BIN).c libs
-	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -I$(INC_DIR) $< $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a -o $@
-
-libs: $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a
+$(TEST_BIN): $(TEST_BIN).c
+	@set -e;
+	$(RM) -f $(DEP_DIR)/$@.d; \
+	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) $(PWD)/$< $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a -o $(PWD)/$@ > $@.$$$$; \
+	sed 's/$@:/$@ $(DEP_DIR)/$@.d:/' < $@.$$$$ > $(DEP_DIR)/$@.d; \
+	$(RM) $@.$$$$
 
 all: libs $(TEST_BIN)
 

@@ -2,7 +2,7 @@ SRC_DIR   ?= $(PWD)/src
 INC_DIR   ?= $(PWD)/../include
 BUILD_DIR ?= $(PWD)/build
 DEP_DIR   ?= $(PWD)/deps
-LIB_DIR   ?= $(PWD)/../libs
+LIB_DIR   ?= $(PWD)/../lib
 
 SRCS := $(SRC_DIR)/start.c
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
