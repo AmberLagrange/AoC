@@ -1,5 +1,5 @@
 AOLIBC_PATH := ../AolibC
-LIB_PATH    := $(AOLIBC_PATH)/libs
+LIB_PATH    := $(AOLIBC_PATH)/lib
 INC_PATH    := $(AOLIBC_PATH)/include
 
 LIBS := $(LIB_PATH)/AolibC.so $(LIB_PATH)/start_main.a
