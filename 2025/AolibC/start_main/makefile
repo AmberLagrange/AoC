@@ -5,26 +5,37 @@ BUILD_DIR ?= $(PWD)/build
 DEP_DIR   ?= $(PWD)/deps
 LIB_DIR   ?= $(PWD)/../lib
 
-SRCS := $(SRC_DIR)/start.c
+START_MAIN := start_main
+
+ifeq ($(CC), clang)
+	PCH_EXT        := .pch
+	PCH_COMP_FLAGS := -Xclang -static-define
+	PCH_INC_FLAGS  := $(foreach PCH, $(PCHS), -include-pch $(PCH))
+else
+	PCH_EXT        := .gch
+	PCH_COMP_FLAGS :=
+	PCH_INC_FLAGS  := $(foreach PCH, $(PCHS), -include $(PCH))
+endif
+
 INCS := $(INC_DIR)/stdlib.h
 
-PCHS := $(INCS:$(INC_DIR)/%=$(PCH_DIR)/%.pch)
+SRCS := $(SRC_DIR)/start.c
+
+PCHS := $(INCS:$(INC_DIR)/%=$(PCH_DIR)/%$(PCH_EXT))
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 DEPS := $(SRCS:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
-START_MAIN := start_main
-
-$(PCH_DIR)/%.pch: $(INC_DIR)/%
+$(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/%
 	set -e; \
 	$(RM) $(DEP_DIR)/$(*F).d; \
-	$(CC) $(CFLAGS) -fPIC -Xclang -static-define -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
+	$(CC) $(CFLAGS) -fPIC $(PCH_COMP_FLAGS) -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
 	$(RM) $@.$$$$
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	set -e; \
 	$(RM) $(DEP_DIR)/$(*F).d; \
-	$(CC) $(CFLAGS) -fPIC --static -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(foreach PCH, $(PCHS), -include-pch $(PCH)) -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
+	$(CC) $(CFLAGS) -fPIC --static -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
 	$(RM) $@.$$$$
 

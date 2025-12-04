@@ -7,7 +7,12 @@
 #define INPUT_BUF_SIZE 32 * 1024
 
 int is_valid(const char *str) {
-	
+
+	if (str == NULL) {
+		
+		return 0;
+	}
+
 	int len = strlen(str);
 	
 	if (len % 2 == 1) {

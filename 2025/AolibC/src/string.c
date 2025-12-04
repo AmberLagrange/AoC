@@ -2,10 +2,6 @@
 
 size_t strlen(const char *str) {
 	
-	if (str == NULL) {
-		return 0;
-	}
-	
 	unsigned long count = 0;
 	while (*str++) {
 		++count;
@@ -56,6 +52,11 @@ char *strtok(char *str, const char *delims) {
 		__strtok_str = str;
 	}
 	
+	if (__strtok_str == NULL) {
+		
+		return NULL;
+	}
+
 	int str_len = strlen(__strtok_str);
 	int delim_len = strlen(delims);
 	

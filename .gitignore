@@ -12,6 +12,7 @@
 
 #reignore precompiled headers, dependencies, objects, static libraries and shared libraries
 *.pch
+*.gch
 *.d
 *.o
 *.a
