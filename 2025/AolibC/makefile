@@ -3,12 +3,14 @@ INC_DIR   := $(CURDIR)/include
 PCH_DIR   := $(CURDIR)/pch
 BUILD_DIR := $(CURDIR)/build
 DEP_DIR   := $(CURDIR)/deps
+TMP_DIR   := $(CURDIR)/tmp
 LIB_DIR   := $(CURDIR)/lib
 BIN_DIR   := $(CURDIR)
 
 LIB_NAME   = AolibC.so
 START_MAIN = start_main
 BIN_NAME  := test
+TMP_FILE   = $(TMP_DIR)/$(*F).$$$$
 
 SILENT_FLAG := $(findstring s, $(word 1, $(MAKEFLAGS)))
 
@@ -45,6 +47,7 @@ dirs:
 	mkdir -p $(PCH_DIR)
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(DEP_DIR)
+	mkdir -p $(TMP_DIR)
 	mkdir -p $(LIB_DIR)
 	$(MAKE) -C $(START_MAIN) dirs
 
@@ -60,6 +63,7 @@ clean:
 	$(RM) -r $(PCH_DIR)
 	$(RM) -r $(BUILD_DIR)
 	$(RM) -r $(DEP_DIR)
+	$(RM) -r $(TMP_DIR)
 	$(RM) -r $(LIB_DIR)
 	$(RM)    $(BIN_NAME)
 	$(MAKE) -C $(START_MAIN) clean
@@ -67,17 +71,17 @@ clean:
 $(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/%
 	set -e; \
 	$(RM) $(DEP_DIR)/$(*F).d; \
-	$(CC) $(CFLAGS) -fPIC -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
-	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
-	$(RM) $@.$$$$
+	$(CC) $(CFLAGS) -fPIC -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $(TMP_FILE); \
+	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $(TMP_FILE) > $(DEP_DIR)/$(*F).d; \
+	$(RM) $(TMP_FILE)
 	@printf '$(*F)$(PCH_EXT) created.\n' $(OUTPUT_REDIRECT)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	set -e; \
 	$(RM) $(DEP_DIR)/$(*F).d; \
-	$(CC) $(CFLAGS) -fPIC -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
-	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
-	$(RM) $@.$$$$
+	$(CC) $(CFLAGS) -fPIC -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ > $(TMP_FILE); \
+	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $(TMP_FILE) > $(DEP_DIR)/$(*F).d; \
+	$(RM) $(TMP_FILE)
 	@printf '$(*F).o created.\n' $(OUTPUT_REDIRECT)
 
 $(LIB_DIR)/$(LIB_NAME): $(OBJS)
@@ -90,9 +94,9 @@ $(LIB_DIR)/$(START_MAIN).a:
 $(BIN_DIR)/$(BIN_NAME): $(BIN_DIR)/$(BIN_NAME).c
 	set -e; \
 	$(RM) $(DEP_DIR)/$(BIN_NAME).d; \
-	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) $^ $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a -o $@ > $@.$$$$; \
-	sed 's#$@:#$@ $(DEP_DIR)/$(BIN_NAME).d:#' < $@.$$$$ > $(DEP_DIR)/$(BIN_NAME).d; \
-	$(RM) $@.$$$$
+	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) $^ $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a -o $@ > $(TMP_FILE); \
+	sed 's#$@:#$@ $(DEP_DIR)/$(BIN_NAME).d:#' < $(TMP_FILE) > $(DEP_DIR)/$(BIN_NAME).d; \
+	$(RM) $(TMP_FILE)
 	@printf '$(BIN_NAME) created.\n' $(OUTPUT_REDIRECT)
 
 .PHONY: all dirs pchs libs clean remake

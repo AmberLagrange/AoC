@@ -18,6 +18,9 @@
 *.a
 *.so
 
-#reignore these input and test files
+#reignore the temp directories in case of leftover temp files
+tmp/
+
+#reignore input and test input files
 input
 test.txt

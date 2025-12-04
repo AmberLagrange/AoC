@@ -3,9 +3,11 @@ INC_DIR   ?= $(CURDIR)/../include
 PCH_DIR   ?= $(CURDIR)/pch
 BUILD_DIR ?= $(CURDIR)/build
 DEP_DIR   ?= $(CURDIR)/deps
+TMP_DIR   ?= $(CURDIR)/tmp
 LIB_DIR   ?= $(CURDIR)/../lib
 
 START_MAIN = start_main
+TMP_FILE   = $(TMP_DIR)/$(*F).$$$$
 
 SILENT_FLAG = $(findstring s, $(word 1, $(MAKEFLAGS)))
 
@@ -39,6 +41,7 @@ dirs:
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(PCH_DIR)
 	mkdir -p $(DEP_DIR)
+	mkdir -p $(TMP_DIR)
 	mkdir -p $(LIB_DIR)
 
 pchs: $(PCHS)
@@ -47,6 +50,7 @@ clean:
 	$(RM) -r $(BUILD_DIR)
 	$(RM) -r $(PCH_DIR)
 	$(RM) -r $(DEP_DIR)
+	$(RM) -r $(TMP_DIR)
 	$(RM)    $(LIB_DIR)/$(START_MAIN).a
 
 remake: clean all
@@ -54,17 +58,17 @@ remake: clean all
 $(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/%
 	set -e; \
 	$(RM) $(DEP_DIR)/$(*F).d; \
-	$(CC) $(CFLAGS) -fPIC $(PCH_COMP_FLAGS) -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
-	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
-	$(RM) $@.$$$$
+	$(CC) $(CFLAGS) -fPIC $(PCH_COMP_FLAGS) -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $(TMP_FILE); \
+	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $(TMP_FILE) > $(DEP_DIR)/$(*F).d; \
+	$(RM) $(TMP_FILE)
 	@printf '$(*F)$(PCH_EXT) Created.\n' $(OUTPUT_REDIRECT)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	set -e; \
 	$(RM) $(DEP_DIR)/$(*F).d; \
-	$(CC) $(CFLAGS) -fPIC --static -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
-	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
-	$(RM) $@.$$$$
+	$(CC) $(CFLAGS) -fPIC --static -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ > $(TMP_FILE); \
+	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $(TMP_FILE) > $(DEP_DIR)/$(*F).d; \
+	$(RM) $(TMP_FILE)
 	@printf '$(*F).o created.\n' $(OUTPUT_REDIRECT)
 
 $(LIB_DIR)/$(START_MAIN).a: $(OBJS)
