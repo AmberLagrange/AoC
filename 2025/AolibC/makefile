@@ -4,10 +4,11 @@ PCH_DIR   := $(PWD)/pch
 BUILD_DIR := $(PWD)/build
 DEP_DIR   := $(PWD)/deps
 LIB_DIR   := $(PWD)/lib
+BIN_DIR   := $(PWD)
 
 LIB_NAME   = AolibC.so
 START_MAIN = start_main
-TEST_BIN   = test
+BIN_NAME  := test
 
 SILENT_FLAG := $(findstring s, $(word 1, $(MAKEFLAGS)))
 
@@ -36,9 +37,9 @@ PCHS = $(INCS:$(INC_DIR)/%=$(PCH_DIR)/%$(PCH_EXT))
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 DEPS = $(SRCS:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
-DEPS += $(DEP_DIR)/$(TEST_BIN).d
+DEPS += $(DEPS_DIR)/$(BIN_NAME).d
 
-all: dirs pchs libs $(TEST_BIN)
+all: dirs pchs libs $(BIN_DIR)/$(BIN_NAME)
 
 dirs:
 	mkdir -p $(PCH_DIR)
@@ -60,7 +61,7 @@ clean:
 	$(RM) -r $(BUILD_DIR)
 	$(RM) -r $(DEP_DIR)
 	$(RM) -r $(LIB_DIR)
-	$(RM)    $(TEST_BIN)
+	$(RM)    $(BIN_NAME)
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) clean
 
 $(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/%
@@ -86,13 +87,13 @@ $(LIB_DIR)/$(LIB_NAME): $(OBJS)
 $(LIB_DIR)/$(START_MAIN).a:
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $@
 
-$(TEST_BIN): $(TEST_BIN).c
+$(BIN_DIR)/$(BIN_NAME): $(BIN_DIR)/$(BIN_NAME).c
 	set -e; \
-	$(RM) $(DEP_DIR)/$@.d; \
-	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) $(PWD)/$< $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a -o $(PWD)/$@ > $@.$$$$; \
-	sed 's#$@:#$@ $(DEP_DIR)/$@.d:#' < $@.$$$$ > $(DEP_DIR)/$@.d; \
+	$(RM) $(DEP_DIR)/$(BIN_NAME).d; \
+	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) $^ $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a -o $@ > $@.$$$$; \
+	sed 's#$@:#$@ $(DEP_DIR)/$(BIN_NAME).d:#' < $@.$$$$ > $(DEP_DIR)/$(BIN_NAME).d; \
 	$(RM) $@.$$$$
-	@printf '$(TEST_BIN) created.\n' $(OUTPUT_REDIRECT)
+	@printf '$(BIN_NAME) created.\n' $(OUTPUT_REDIRECT)
 
 .PHONY: all dirs pchs libs clean remake
 
