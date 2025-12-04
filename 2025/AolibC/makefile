@@ -1,10 +1,10 @@
-SRC_DIR   := $(PWD)/src
-INC_DIR   := $(PWD)/include
-PCH_DIR   := $(PWD)/pch
-BUILD_DIR := $(PWD)/build
-DEP_DIR   := $(PWD)/deps
-LIB_DIR   := $(PWD)/lib
-BIN_DIR   := $(PWD)
+SRC_DIR   := $(CURDIR)/src
+INC_DIR   := $(CURDIR)/include
+PCH_DIR   := $(CURDIR)/pch
+BUILD_DIR := $(CURDIR)/build
+DEP_DIR   := $(CURDIR)/deps
+LIB_DIR   := $(CURDIR)/lib
+BIN_DIR   := $(CURDIR)
 
 LIB_NAME   = AolibC.so
 START_MAIN = start_main
@@ -26,17 +26,16 @@ else
 	PCH_FLAGS := $(foreach PCH, $(PCHS), -include $(PCH))
 endif
 
-SRCS =  $(SRC_DIR)/fcntl.c $(SRC_DIR)/stack_chk_fail.c $(SRC_DIR)/stdio.c \
-		$(SRC_DIR)/stdlib.c $(SRC_DIR)/string.c $(SRC_DIR)/syscall.c \
-		$(SRC_DIR)/unistd.c
+SRCS = $(SRC_DIR)/fcntl.c $(SRC_DIR)/stack_chk_fail.c $(SRC_DIR)/stdio.c \
+	   $(SRC_DIR)/stdlib.c $(SRC_DIR)/string.c $(SRC_DIR)/syscall.c \
+	   $(SRC_DIR)/unistd.c
 
 INCS = $(INC_DIR)/fcntl.h $(INC_DIR)/stdio.h $(INC_DIR)/stdlib.h \
 	   $(INC_DIR)/string.h $(INC_DIR)/syscall.h $(INC_DIR)/unistd.h
 
-PCHS = $(INCS:$(INC_DIR)/%=$(PCH_DIR)/%$(PCH_EXT))
-OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
-DEPS = $(SRCS:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
-
+PCHS  = $(INCS:$(INC_DIR)/%=$(PCH_DIR)/%$(PCH_EXT))
+OBJS  = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+DEPS  = $(SRCS:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 DEPS += $(DEPS_DIR)/$(BIN_NAME).d
 
 all: dirs pchs libs $(BIN_DIR)/$(BIN_NAME)
@@ -46,13 +45,13 @@ dirs:
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(DEP_DIR)
 	mkdir -p $(LIB_DIR)
-	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) dirs
+	$(MAKE) -C $(START_MAIN) dirs
 
 pchs: $(PCHS)
-	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) INC_DIR=$(INC_DIR) $@
+	$(MAKE) -C $(START_MAIN) INC_DIR=$(INC_DIR) $@
 
 libs: $(LIB_DIR)/$(LIB_NAME)
-	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $(LIB_DIR)/$(START_MAIN).a
+	$(MAKE) -C $(START_MAIN) LIB_DIR=$(LIB_DIR) $(LIB_DIR)/$(START_MAIN).a
 
 remake: clean all
 
@@ -62,7 +61,7 @@ clean:
 	$(RM) -r $(DEP_DIR)
 	$(RM) -r $(LIB_DIR)
 	$(RM)    $(BIN_NAME)
-	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) clean
+	$(MAKE) -C $(START_MAIN) clean
 
 $(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/%
 	set -e; \
@@ -85,7 +84,7 @@ $(LIB_DIR)/$(LIB_NAME): $(OBJS)
 	@printf '$(LIB_NAME) created.\n' $(OUTPUT_REDIRECT)
 
 $(LIB_DIR)/$(START_MAIN).a:
-	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $@
+	$(MAKE) -C $(START_MAIN) LIB_DIR=$(LIB_DIR) $@
 
 $(BIN_DIR)/$(BIN_NAME): $(BIN_DIR)/$(BIN_NAME).c
 	set -e; \

@@ -1,9 +1,9 @@
-SRC_DIR   ?= $(PWD)/src
-INC_DIR   ?= $(PWD)/../include
-PCH_DIR   ?= $(PWD)/pch
-BUILD_DIR ?= $(PWD)/build
-DEP_DIR   ?= $(PWD)/deps
-LIB_DIR   ?= $(PWD)/../lib
+SRC_DIR   ?= $(CURDIR)/src
+INC_DIR   ?= $(CURDIR)/../include
+PCH_DIR   ?= $(CURDIR)/pch
+BUILD_DIR ?= $(CURDIR)/build
+DEP_DIR   ?= $(CURDIR)/deps
+LIB_DIR   ?= $(CURDIR)/../lib
 
 START_MAIN = start_main
 
