@@ -10,12 +10,6 @@
 
 enum {
 	
-	WIDTH  = 140,
-	HEIGHT = 140
-};
-
-enum {
-	
 	TOP_LEFT  = 0,
 	TOP_MID   = 1,
 	TOP_RIGHT = 2,
@@ -154,9 +148,9 @@ int main(int argc, char **argv) {
 	for (;;) {
 		
 		int new_accessable_rolls = 0;
-		for (unsigned int row = 0; row < HEIGHT; ++row) {
+		for (unsigned int row = 0; row < height; ++row) {
 			
-			for (unsigned int col = 0; col < WIDTH; ++col) {
+			for (unsigned int col = 0; col < width; ++col) {
 				
 				if (is_free_square(grid, row, col, width, height)) {
 					
