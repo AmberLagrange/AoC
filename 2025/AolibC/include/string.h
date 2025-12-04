@@ -10,6 +10,8 @@ typedef unsigned long size_t;
 #define NULL ((void *)(0))
 #endif
 
+void *memcpy(void *dst, const void *src, size_t count);
+
 size_t strlen(const char *str);
 
 int strcmp(const char *lhs, const char *rhs);

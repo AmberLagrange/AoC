@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #define INPUT_BUF_SIZE 32 * 1024
@@ -23,16 +24,25 @@ int main(int argc, char **argv) {
 		goto quit;
 	}
 	
-	char input_buf[INPUT_BUF_SIZE];
-	ssize_t read_count = read(fd, input_buf, sizeof(input_buf));
+	char *input_buf = malloc(INPUT_BUF_SIZE);
+	if (input_buf == NULL) {
+		
+		puts("Error: could not allocate memory.\n");
+		status = -3;
+		goto quit;
+	}
+	
+	ssize_t read_count = read(fd, input_buf, INPUT_BUF_SIZE);
 	if (read_count < 0) {
 		
 		puts("Error: could not read from the file.\n");
 		status = -3;
 		goto close;
 	}
-
-	puts(input_buf);
+	input_buf[read_count] = '\0';
+	
+	//puts(input_buf);
+	free(input_buf);
 	
 close:
 	close(fd);

@@ -1,5 +1,5 @@
 #include <fcntl.h>
-#include <mman.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
 		++height;
 	}
 	
-	char *grid = mmap(NULL, width * height, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	char *grid = malloc(width * height);
 	if (grid == NULL) {
 		
 		puts("Error: could not allocate memory.");
@@ -179,7 +179,7 @@ int main(int argc, char **argv) {
 	print_num(accessable_rolls);
 	putc('\n', stdout);
 	
-	munmap(grid, width * height);
+	free(grid);
 	
 close:
 	close(fd);

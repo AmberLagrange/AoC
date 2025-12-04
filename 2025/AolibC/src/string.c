@@ -1,9 +1,23 @@
 #include <string.h>
 
+void *memcpy(void *dst, const void *src, size_t count) {
+	
+	size_t index = 0;
+	while (*(((unsigned char *)(src)) + index) && index < count) {
+		
+		*(((unsigned char *)(dst)) + index) = *(((unsigned char *)(src)) + index);
+		++index;
+	}
+	
+	return dst;
+}
+
+
 size_t strlen(const char *str) {
 	
 	unsigned long count = 0;
 	while (*str++) {
+		
 		++count;
 	}
 	
@@ -16,16 +30,20 @@ int strcmp(const char *lhs, const char *rhs) {
 	int rhs_len = strlen(rhs);
 	
 	if (lhs_len < rhs_len) {
+		
 		return -1;
 	} else if (lhs_len > rhs_len) {
+		
 		return 1;
 	}
 
 	for (int i = 0; i < lhs_len; ++i) {
 		
 		if (lhs[i] < rhs[i]) {
+			
 			return -1;
 		} else if (lhs[i] > rhs[i]) {
+			
 			return 1;
 		}
 	}
@@ -33,22 +51,16 @@ int strcmp(const char *lhs, const char *rhs) {
 	return 0;
 }
 
-char *strncpy(char *dst, const char *src, unsigned long count) {
+char *strncpy(char *dst, const char *src, size_t count) {
 	
-	unsigned int i = 0;
-	while (src[i] && i < count) {
-		
-		dst[i] = src[i];
-		++i;
-	}
-	
-	return dst;
+	return memcpy(dst, src, count);
 }
 
 char *__strtok_str;
 char *strtok(char *str, const char *delims) {
 	
 	if (str != NULL) {
+		
 		__strtok_str = str;
 	}
 	
@@ -75,6 +87,7 @@ char *strtok(char *str, const char *delims) {
 	}
 	
 	if (__strtok_str != NULL) {
+		
 		__strtok_str = NULL;
 	}
 	
