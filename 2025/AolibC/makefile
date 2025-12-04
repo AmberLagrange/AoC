@@ -30,12 +30,22 @@ DEPS = $(SRCS:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
 DEPS += $(DEP_DIR)/$(TEST_BIN).d
 
+all: dirs pchs libs $(TEST_BIN)
+
 dirs:
 	mkdir -p $(PCH_DIR)
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(DEP_DIR)
 	mkdir -p $(LIB_DIR)
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) dirs
+
+pchs: $(PCHS)
+	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) INC_DIR=$(INC_DIR) $@
+
+libs: $(LIB_DIR)/$(LIB_NAME)
+	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $(LIB_DIR)/$(START_MAIN).a
+
+remake: clean all
 
 clean:
 	$(RM) -r $(PCH_DIR)
@@ -68,12 +78,6 @@ $(LIB_DIR)/$(LIB_NAME): $(OBJS)
 $(LIB_DIR)/$(START_MAIN).a:
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $@
 
-pchs: $(PCHS)
-	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) INC_DIR=$(INC_DIR) $@
-
-libs: $(LIB_DIR)/$(LIB_NAME)
-	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $(LIB_DIR)/$(START_MAIN).a
-
 $(TEST_BIN): $(TEST_BIN).c
 	set -e; \
 	$(RM) $(DEP_DIR)/$@.d; \
@@ -82,11 +86,7 @@ $(TEST_BIN): $(TEST_BIN).c
 	$(RM) $@.$$$$
 	@printf '$(TEST_BIN) created.\n'
 
-all: pchs libs $(TEST_BIN)
-
-remake: clean dirs all
-
-.PHONY: dirs clean pchs libs all remake
+.PHONY: all dirs pchs libs clean remake
 
 -include $(DEPS)
 

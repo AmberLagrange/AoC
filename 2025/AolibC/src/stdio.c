@@ -17,6 +17,6 @@ int putc(int c, FILE *file) {
 int puts(const char *str) {
 	
 	size_t len = strlen(str);
-	return __syscall_3(SYS_WRITE, 0, (u64)(str), len);
+	return __syscall_3(SYS_WRITE, stdout->fd, (u64)(str), len);
 }
 
