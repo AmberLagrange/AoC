@@ -31,6 +31,7 @@ $(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/%
 	$(CC) $(CFLAGS) -fPIC $(PCH_COMP_FLAGS) -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
 	$(RM) $@.$$$$
+	@printf '$(*F)$(PCH_EXT) Created.\n'
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	set -e; \
@@ -38,9 +39,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -fPIC --static -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
 	$(RM) $@.$$$$
+	@printf '$(*F).o created.\n'
 
 $(LIB_DIR)/$(START_MAIN).a: $(OBJS)
 	$(AR) rcs $@ $(OBJS)
+	@printf '$(START_MAIN).a created.\n'
 
 dirs:
 	mkdir -p $(BUILD_DIR)
@@ -63,3 +66,4 @@ remake: clean dirs all
 .PHONY: dirs clean pchs all remake
 
 -include $(DEPS)
+

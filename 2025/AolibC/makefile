@@ -17,7 +17,7 @@ else
 	PCH_FLAGS := $(foreach PCH, $(PCHS), -include $(PCH))
 endif
 
-SRCS =	$(SRC_DIR)/fcntl.c $(SRC_DIR)/stack_chk_fail.c $(SRC_DIR)/stdio.c \
+SRCS =  $(SRC_DIR)/fcntl.c $(SRC_DIR)/stack_chk_fail.c $(SRC_DIR)/stdio.c \
 		$(SRC_DIR)/stdlib.c $(SRC_DIR)/string.c $(SRC_DIR)/syscall.c \
 		$(SRC_DIR)/unistd.c
 
@@ -46,12 +46,12 @@ clean:
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) clean
 
 $(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/%
-	echo $(CC)
 	set -e; \
 	$(RM) $(DEP_DIR)/$(*F).d; \
 	$(CC) $(CFLAGS) -fPIC -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
 	$(RM) $@.$$$$
+	@printf '$(*F)$(PCH_EXT) created.\n'
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	set -e; \
@@ -59,9 +59,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -fPIC -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
 	$(RM) $@.$$$$
+	@printf '$(*F).o created.\n'
 
 $(LIB_DIR)/$(LIB_NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) --shared -nostdlib -nostdinc $(OBJS) -o $@
+	@printf '$(LIB_NAME) created.\n'
 
 $(LIB_DIR)/$(START_MAIN).a:
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $@
@@ -73,11 +75,12 @@ libs: $(LIB_DIR)/$(LIB_NAME)
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $(LIB_DIR)/$(START_MAIN).a
 
 $(TEST_BIN): $(TEST_BIN).c
-	set -e;
+	set -e; \
 	$(RM) $(DEP_DIR)/$@.d; \
 	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) $(PWD)/$< $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a -o $(PWD)/$@ > $@.$$$$; \
 	sed 's#$@:#$@ $(DEP_DIR)/$@.d:#' < $@.$$$$ > $(DEP_DIR)/$@.d; \
 	$(RM) $@.$$$$
+	@printf '$(TEST_BIN) created.\n'
 
 all: pchs libs $(TEST_BIN)
 
