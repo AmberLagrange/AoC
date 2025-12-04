@@ -6,8 +6,8 @@
 
 #include "helper.h"
 
-#define WIDTH  10
-#define HEIGHT 10
+#define WIDTH  140
+#define HEIGHT 140
 
 #define TOP_LEFT  0
 #define TOP_MID   1
