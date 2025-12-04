@@ -5,7 +5,15 @@ BUILD_DIR ?= $(PWD)/build
 DEP_DIR   ?= $(PWD)/deps
 LIB_DIR   ?= $(PWD)/../lib
 
-START_MAIN := start_main
+START_MAIN = start_main
+
+SILENT_FLAG = $(findstring s, $(word 1, $(MAKEFLAGS)))
+
+ifeq ($(SILENT_FLAG), s)
+	OUTPUT_REDIRECT = >/dev/null
+else
+	OUTPUT_REDIRECT =
+endif
 
 ifeq ($(CC), clang)
 	PCH_EXT        := .pch
@@ -49,7 +57,7 @@ $(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/%
 	$(CC) $(CFLAGS) -fPIC $(PCH_COMP_FLAGS) -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
 	$(RM) $@.$$$$
-	@printf '$(*F)$(PCH_EXT) Created.\n'
+	@printf '$(*F)$(PCH_EXT) Created.\n' $(OUTPUT_REDIRECT)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	set -e; \
@@ -57,11 +65,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -fPIC --static -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
 	$(RM) $@.$$$$
-	@printf '$(*F).o created.\n'
+	@printf '$(*F).o created.\n' $(OUTPUT_REDIRECT)
 
 $(LIB_DIR)/$(START_MAIN).a: $(OBJS)
 	$(AR) rcs $@ $(OBJS)
-	@printf '$(START_MAIN).a created.\n'
+	@printf '$(START_MAIN).a created.\n' $(OUTPUT_REDIRECT)
 
 .PHONY: all dirs pchs clean remake
 

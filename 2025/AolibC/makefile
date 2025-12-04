@@ -1,19 +1,27 @@
-SRC_DIR   = $(PWD)/src
-INC_DIR   = $(PWD)/include
-PCH_DIR   = $(PWD)/pch
-BUILD_DIR = $(PWD)/build
-DEP_DIR   = $(PWD)/deps
-LIB_DIR   = $(PWD)/lib
+SRC_DIR   := $(PWD)/src
+INC_DIR   := $(PWD)/include
+PCH_DIR   := $(PWD)/pch
+BUILD_DIR := $(PWD)/build
+DEP_DIR   := $(PWD)/deps
+LIB_DIR   := $(PWD)/lib
 
 LIB_NAME   = AolibC.so
 START_MAIN = start_main
 TEST_BIN   = test
 
+SILENT_FLAG := $(findstring s, $(word 1, $(MAKEFLAGS)))
+
+ifeq ($(SILENT_FLAG), s)
+	OUTPUT_REDIRECT = >/dev/null
+else
+	OUTPUT_REDIRECT =
+endif
+
 ifeq ($(CC), clang)
-	PCH_EXT        := .pch
+	PCH_EXT    = .pch
 	PCH_FLAGS := $(foreach PCH, $(PCHS), -include-pch $(PCH))
 else
-	PCH_EXT        := .gch
+	PCH_EXT    = .gch
 	PCH_FLAGS := $(foreach PCH, $(PCHS), -include $(PCH))
 endif
 
@@ -61,7 +69,7 @@ $(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/%
 	$(CC) $(CFLAGS) -fPIC -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
 	$(RM) $@.$$$$
-	@printf '$(*F)$(PCH_EXT) created.\n'
+	@printf '$(*F)$(PCH_EXT) created.\n' $(OUTPUT_REDIRECT)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	set -e; \
@@ -69,11 +77,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -fPIC -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ > $@.$$$$; \
 	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $@.$$$$ > $(DEP_DIR)/$(*F).d; \
 	$(RM) $@.$$$$
-	@printf '$(*F).o created.\n'
+	@printf '$(*F).o created.\n' $(OUTPUT_REDIRECT)
 
 $(LIB_DIR)/$(LIB_NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) --shared -nostdlib -nostdinc $(OBJS) -o $@
-	@printf '$(LIB_NAME) created.\n'
+	@printf '$(LIB_NAME) created.\n' $(OUTPUT_REDIRECT)
 
 $(LIB_DIR)/$(START_MAIN).a:
 	$(MAKE) -C $(START_MAIN) PWD=$(PWD)/$(START_MAIN) LIB_DIR=$(LIB_DIR) $@
@@ -84,7 +92,7 @@ $(TEST_BIN): $(TEST_BIN).c
 	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -MD -MP -MT $@ -MF - -I$(INC_DIR) $(PWD)/$< $(LIB_DIR)/$(LIB_NAME) $(LIB_DIR)/$(START_MAIN).a -o $(PWD)/$@ > $@.$$$$; \
 	sed 's#$@:#$@ $(DEP_DIR)/$@.d:#' < $@.$$$$ > $(DEP_DIR)/$@.d; \
 	$(RM) $@.$$$$
-	@printf '$(TEST_BIN) created.\n'
+	@printf '$(TEST_BIN) created.\n' $(OUTPUT_REDIRECT)
 
 .PHONY: all dirs pchs libs clean remake
 
