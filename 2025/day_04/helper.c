@@ -22,6 +22,13 @@ char *reverse_str(char *str) {
 
 char *int_to_str(u64 num, char *buf) {
 	
+	if (num == 0) {
+		
+		buf[0] = '0';
+		buf[1] = '\0';
+		return buf;
+	}
+	
 	int i = 0;
 	
 	while (num) {

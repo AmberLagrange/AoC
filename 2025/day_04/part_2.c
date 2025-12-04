@@ -6,8 +6,8 @@
 
 #include "helper.h"
 
-#define WIDTH  140
-#define HEIGHT 140
+#define WIDTH  10
+#define HEIGHT 10
 
 #define TOP_LEFT  0
 #define TOP_MID   1
@@ -102,11 +102,19 @@ int main(int argc, char **argv) {
 				
 				if (is_free_square(grid, row, col)) {
 					
+					putc('x', stdout);
 					grid[row][col] = EMPTY_SPACE;
 					++new_accessable_rolls;
-				}	
+				} else {
+					
+					putc(grid[row][col], stdout);
+				}
 			}
+			putc('\n', stdout);
 		}
+		puts("\nRemoved ");
+		print_num(new_accessable_rolls);
+		puts(" rolls.\n");
 		
 		if (new_accessable_rolls == 0) {
 			
