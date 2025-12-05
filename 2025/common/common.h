@@ -23,6 +23,8 @@ char *int_to_str(uint64_t num, char *buf);
 
 void print_num(uint64_t num);
 
+void parse_range(const char *range, uint64_t *start, uint64_t *end);
+
 // Boilerplate for every day
 
 int32_t init_aoc(int argc, char **argv, char **input);

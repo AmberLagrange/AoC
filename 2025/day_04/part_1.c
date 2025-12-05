@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <helper.h>
+#include <common.h>
 
 #define INPUT_BUF_SIZE 32 * 1024
 #define flatten_coords(row, col, width, height) ((row) * (width) + (col))

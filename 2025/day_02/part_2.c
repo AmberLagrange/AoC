@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <helper.h>
+#include <common.h>
 
 #define MAX_INPUT_LEN 16
 
@@ -42,24 +42,6 @@ int is_invalid(const char *str, char **partition_list, size_t max_partitions) {
 	}
 	
 	return 0;
-}
-
-void parse_range(const char *range, uint64_t *start, uint64_t *end) {
-	
-	*start = 0;
-	*end   = 0;
-	
-	char c;
-	
-	while ((c = *range++) != '-') {
-		*start *= 10;
-		*start += (c - '0');
-	}
-	
-	while((c = *range++) != '\0') {
-		*end *= 10;
-		*end += (c - '0');
-	}
 }
 
 uint64_t check_ranges(const char *range, char **partition_list, size_t size) {

@@ -1,4 +1,4 @@
-#include <helper.h>
+#include <common.h>
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -49,6 +49,24 @@ void print_num(uint64_t num) {
 	char buf[MAX_STR_LEN];
 	int_to_str(num, buf);
 	puts(buf);
+}
+
+void parse_range(const char *range, uint64_t *start, uint64_t *end) {
+	
+	*start = 0;
+	*end   = 0;
+	
+	char c;
+	
+	while ((c = *range++) != '-') {
+		*start *= 10;
+		*start += (c - '0');
+	}
+	
+	while((c = *range++) != '\0') {
+		*end *= 10;
+		*end += (c - '0');
+	}
 }
 
 // Boilerplate

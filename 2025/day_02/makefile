@@ -5,15 +5,15 @@ COMMON_PATH := $(CURDIR)/../common
 
 LIBS := $(LIB_PATH)/AolibC.so $(LIB_PATH)/start_main.a
 
-HELPER_SRC := $(COMMON_PATH)/helper.c
+COMMON_SRC := $(COMMON_PATH)/common.c
 
 all: part_1 part_2
 
 part_1: part_1.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -I$(INC_PATH) -I$(COMMON_PATH) part_1.c $(HELPER_SRC) $(LIBS) -o part_1
+	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -I$(INC_PATH) -I$(COMMON_PATH) part_1.c $(COMMON_SRC) $(LIBS) -o part_1
 
 part_2: part_2.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -I$(INC_PATH) -I$(COMMON_PATH) part_2.c $(HELPER_SRC) $(LIBS) -o part_2
+	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -I$(INC_PATH) -I$(COMMON_PATH) part_2.c $(COMMON_SRC) $(LIBS) -o part_2
 
 clean:
 	$(RM) part_1 part_2

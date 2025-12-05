@@ -3,25 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <helper.h>
-
-void parse_range(const char *range, uint64_t *start, uint64_t *end) {
-	
-	*start = 0;
-	*end   = 0;
-	
-	char c;
-	
-	while ((c = *range++) != '-') {
-		*start *= 10;
-		*start += (c - '0');
-	}
-	
-	while((c = *range++) != '\0') {
-		*end *= 10;
-		*end += (c - '0');
-	}
-}
+#include <common.h>
 
 int is_fresh(uint64_t ingredient, const uint64_t *ranges, size_t range_len) {
 	

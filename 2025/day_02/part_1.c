@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include <helper.h>
+#include <common.h>
 
 int is_valid(const char *str) {
 	
@@ -27,24 +27,6 @@ int is_valid(const char *str) {
 	second_half[half_len] = '\0';
 	
 	return (strcmp(first_half, second_half) != 0);
-}
-
-void parse_range(const char *range, uint64_t *start, uint64_t *end) {
-	
-	*start = 0;
-	*end   = 0;
-	
-	char c;
-	
-	while ((c = *range++) != '-') {
-		*start *= 10;
-		*start += (c - '0');
-	}
-	
-	while((c = *range++) != '\0') {
-		*end *= 10;
-		*end += (c - '0');
-	}
 }
 
 uint64_t check_ranges(const char *range) {

@@ -1,8 +1,6 @@
 #include <string.h>
 
-#include <helper.h>
-
-#define INPUT_BUF_SIZE 32 * 1024
+#include <common.h>
 
 int find_max_joltage(const char *battery) {
 	
