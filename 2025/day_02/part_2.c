@@ -22,8 +22,6 @@ int is_invalid(const char *str, char **partition_list, size_t max_partitions) {
 			
 			strncpy(partition_list[partition], str + split_len * partition, split_len);
 			partition_list[partition][split_len] = '\0';
-			puts(partition_list[partition]);
-			puts("\n");
 		}
 		
 		int invalid = 1;	
@@ -84,6 +82,8 @@ uint64_t check_ranges(const char *range, char **partition_list, size_t size) {
 
 int main(int argc, char **argv) {
 	
+	int status = EXIT_SUCCESS;
+	
 	char *input;
 	if (init_aoc(argc, argv, &input)) {
 		
@@ -96,19 +96,21 @@ int main(int argc, char **argv) {
 	if (partition_list == NULL) {
 		
 		puts("Error: could not allocate memory for the partition list.\n");
+		status = EXIT_FAIL;
 		goto cleanup;
 	}
 	
-	char *partitions = malloc(sizeof(char *) * MAX_STR_LEN * MAX_INPUT_LEN);
+	char *partitions = malloc(sizeof(uint64_t) * MAX_STR_LEN * MAX_INPUT_LEN);
 	if (partitions == NULL) {
 		
 		puts("Error: could not allocate memory for the partitions.\n");
-		goto partition_cleanup;
+		status = EXIT_FAIL;
+		goto partition_free;
 	}
 	
 	for (size_t index = 0; index < MAX_INPUT_LEN; ++index) {
 		
-		partition_list[index] = (partitions + sizeof(char *) * MAX_STR_LEN);
+		partition_list[index] = (partitions + index * MAX_STR_LEN);
 	}
 	
 	char *range = strtok(input, ",");
@@ -119,12 +121,11 @@ int main(int argc, char **argv) {
 	}
 	
 	free(partitions);
-	
-partition_cleanup:
+partition_free:
 	free(partition_list);
 	
 cleanup:
 	clean_aoc(sum, input);
-	return EXIT_SUCCESS;
+	return status;
 }
 

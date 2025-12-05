@@ -88,3 +88,4 @@ int main(int argc, char **argv) {
 	clean_aoc(sum, input);
 	return EXIT_SUCCESS;
 }
+
