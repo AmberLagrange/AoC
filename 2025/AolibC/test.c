@@ -1,53 +1,29 @@
-#include <fcntl.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 
-#define INPUT_BUF_SIZE 32 * 1024
-
-int main(int argc, char **argv) {
+int main(void) {
 	
-	int status = 0;
+	int *arr = sbrk(8);
 	
-	if (argc < 2) {
+	if (arr == (void *)(-1)) {
 		
-		puts("Please provide a file.\n");
-		status = -1;
-		goto quit;
+		puts("sbrk failed.\n");
+		return -1;
 	}
 	
-	int fd = open(argv[1], O_RDONLY, 0);
-	if (fd < 0) {
+	for (size_t i = 0; i < 8; ++i) {
 		
-		puts("Error: could not open the file.\n");
-		status = -2;
-		goto quit;
+		arr[i] = i;
 	}
 	
-	char *input_buf = malloc(INPUT_BUF_SIZE);
-	if (input_buf == NULL) {
+	for (size_t i = 0; i < 8; ++i) {
 		
-		puts("Error: could not allocate memory.\n");
-		status = -3;
-		goto quit;
+		putc(arr[i] + '0', stdout);
+		puts("\n");
 	}
 	
-	ssize_t read_count = read(fd, input_buf, INPUT_BUF_SIZE);
-	if (read_count < 0) {
-		
-		puts("Error: could not read from the file.\n");
-		status = -3;
-		goto close;
-	}
-	input_buf[read_count] = '\0';
+	sbrk(-8);
 	
-	puts(input_buf);
-	free(input_buf);
-	
-close:
-	close(fd);
-	
-quit:
-	return status;
+	return 0;
 }
 

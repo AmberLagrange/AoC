@@ -1,17 +1,43 @@
 #include <string.h>
 
+#define WORD_SIZE 8
+
+#define MEMCPY_WORD(dst, src) do {	\
+									\
+	(dst)[0] = (src)[0];			\
+	(dst)[1] = (src)[1];			\
+	(dst)[2] = (src)[2];			\
+	(dst)[3] = (src)[3];			\
+	(dst)[4] = (src)[4];			\
+	(dst)[5] = (src)[5];			\
+	(dst)[6] = (src)[6];			\
+	(dst)[7] = (src)[7];			\
+} while (0)
+
+#define MEMCPY_BYTE(dst, src) do {	\
+									\
+	(dst)[0] = (src)[0];			\
+} while (0)
+
 void *memcpy(void *dst, const void *src, size_t count) {
 	
 	size_t index = 0;
-	while (*(((unsigned char *)(src)) + index) && index < count) {
+	while (count >= WORD_SIZE) {
 		
-		*(((unsigned char *)(dst)) + index) = *(((unsigned char *)(src)) + index);
-		++index;
+		MEMCPY_WORD((unsigned char*)(dst) + index, (unsigned char *)(src) + index);
+		index += WORD_SIZE;
+		count -= WORD_SIZE;
+	}
+	
+	while (count > 0) {
+		
+		MEMCPY_BYTE((unsigned char *)(dst) + index, (unsigned char *)(src) + index);
+		index += 1;
+		count -= 1;
 	}
 	
 	return dst;
 }
-
 
 size_t strlen(const char *str) {
 	

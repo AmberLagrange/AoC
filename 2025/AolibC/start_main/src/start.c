@@ -1,6 +1,9 @@
 #include <stdlib.h>
 
+#include <syscall.h>
+
 extern int main(int argc, char **argv);
+extern void _init(void);
 
 void __attribute__((naked)) _start(void) {
 	
@@ -12,9 +15,8 @@ void __attribute__((naked)) _start(void) {
 }
 
 void __start_main(int argc, char **argv) {
-	
-	int result;
-	result = main(argc, argv);
-	exit(result);
+
+	_init();
+	exit(main(argc, argv));
 }
 

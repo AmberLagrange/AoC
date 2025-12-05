@@ -8,6 +8,8 @@ enum {
 	SYS_CLOSE  = 3,
 	SYS_MMAP   = 9,
 	SYS_MUNMAP = 11,
+	SYS_BRK    = 12,
+	SYS_GETPID = 39,
 	SYS_EXIT   = 60
 };
 
