@@ -1,47 +1,25 @@
-#include <fcntl.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <string.h>
 
 #include <helper.h>
 
-#define INPUT_BUF_SIZE 32 * 1024
-
 int main(int argc, char **argv) {
 	
-	int status = 0;
-	
-	if (argc < 2) {
+	char *input;
+	if (init_aoc(argc, argv, &input)) {
 		
-		puts("Please provide a file.\n");
-		status = -1;
-		goto quit;
-	}
-	
-	int fd = open(argv[1], O_RDONLY, 0);
-	if (fd < 0) {
-		
-		puts("Error: could not open the file.\n");
-		status = -2;
-		goto quit;
-	}
-	
-	char input_buf[INPUT_BUF_SIZE];
-	ssize_t read_count = read(fd, input_buf, sizeof(input_buf));
-	if (read_count < 0) {
-		
-		puts("Error: could not read from the file.\n");
-		status = -3;
-		goto close;
+		return EXIT_FAIL;
 	}
 	
 	int  val   = 0;
 	char dir   = '0';
 	int  dial  = 50;
 	int  count = 0;
+	size_t len = strlen(input);
 	
-	for (ssize_t i = 0; i < read_count; ++i) {
+	for (size_t index = 0; index < len; ++index) {
 		
-		char c = input_buf[i];
+		char c = input[index];
 		
 		if (c == '\n') {
 			
@@ -75,14 +53,7 @@ int main(int argc, char **argv) {
 		
 	}
 	
-	puts("The password is: ");
-	print_num(count);
-	puts("\n");
-	
-close:
-	close(fd);
-	
-quit:
-	return status;
+	clean_aoc(count, input);
+	return EXIT_SUCESS;
 }
 

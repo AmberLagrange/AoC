@@ -9,9 +9,6 @@
 typedef struct {
 	
 	size_t memory_size;
-	int foo;
-	int bar;
-	int baz;
 } malloc_block_t;
 
 enum {
@@ -50,8 +47,10 @@ void free(void *ptr_addr) {
 		return;
 	}
 	
-	malloc_block_t block = *((malloc_block_t *)((unsigned char *)(ptr_addr) - ALIGNMENT_LEN));
-	munmap(ptr_addr, block.memory_size);
+	unsigned char *base_addr = ((unsigned char *)(ptr_addr) - ALIGNMENT_LEN);
+	malloc_block_t block = *((malloc_block_t *)(base_addr));
+	
+	munmap(base_addr, block.memory_size);
 }
 
 // Ignore negatives for now
