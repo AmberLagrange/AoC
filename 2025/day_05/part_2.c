@@ -267,39 +267,44 @@ int main(int argc, char **argv) {
 		line = strtok(NULL, "\n");
 	}
 	
-	for (int i = 0; i < 10; ++i) {
-	for (size_t range_1_index = 0; range_1_index < range_len; ++range_1_index) {
+	int range_updated;
+	do {
 		
-		range_t *range_1 = &ranges[range_1_index];
-		if (!range_1->valid) {
+		range_updated = 0;
+		for (size_t range_1_index = 0; range_1_index < range_len; ++range_1_index) {
 			
-			continue;
-		}
-		
-		for (size_t range_2_index = 0; range_2_index < range_len; ++range_2_index) {
-			
-			range_t *range_2 = &ranges[range_2_index];
-			if (!range_2->valid || range_1 == range_2) {
+			range_t *range_1 = &ranges[range_1_index];
+			if (!range_1->valid) {
 				
 				continue;
 			}
 			
-			if (range_fully_contains(*range_1, *range_2)) {
+			for (size_t range_2_index = 0; range_2_index < range_len; ++range_2_index) {
 				
-				range_2->valid = 0;
-			} else if (range_extends_start(*range_1, *range_2)) {
+				range_t *range_2 = &ranges[range_2_index];
+				if (!range_2->valid || range_1 == range_2) {
+					
+					continue;
+				}
 				
-				range_1->start = range_2->start;
-				range_2->valid = 0;
-			} else if (range_extends_end(*range_1, *range_2)) {
-				
-				range_1->end   = range_2->end;
-				range_2->valid = 0;
+				if (range_fully_contains(*range_1, *range_2)) {
+					
+					range_2->valid = 0;
+					range_updated = 1;
+				} else if (range_extends_start(*range_1, *range_2)) {
+					
+					range_1->start = range_2->start;
+					range_2->valid = 0;
+					range_updated = 1;
+				} else if (range_extends_end(*range_1, *range_2)) {
+					
+					range_1->end   = range_2->end;
+					range_2->valid = 0;
+					range_updated = 1;
+				}
 			}
 		}
-	}
-	(void)(i);
-	}
+	} while (range_updated);
 	
 	uint64_t valid_ids = 0;
 	for (size_t index = 0; index < range_len; ++index) {
@@ -309,7 +314,6 @@ int main(int argc, char **argv) {
 			
 			continue;
 		}
-		print_range(range);
 		valid_ids += (range.end - range.start + 1);
 	}
 	
