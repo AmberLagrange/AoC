@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <string.h>
 
 #include <helper.h>
@@ -46,6 +45,6 @@ int main(int argc, char **argv) {
 	}
 	
 	clean_aoc(count, input);
-	return EXIT_SUCESS;
+	return EXIT_SUCCESS;
 }
 

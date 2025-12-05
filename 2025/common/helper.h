@@ -10,7 +10,7 @@ enum {
 enum {
 	
 	EXIT_FAIL	= -1,
-	EXIT_SUCESS	= 0
+	EXIT_SUCCESS	= 0
 };
 
 // Helper functions not in libc

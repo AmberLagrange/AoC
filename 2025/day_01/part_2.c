@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <string.h>
 
 #include <helper.h>
@@ -11,49 +10,61 @@ int main(int argc, char **argv) {
 		return EXIT_FAIL;
 	}
 	
-	int  val   = 0;
-	char dir   = '0';
-	int  dial  = 50;
-	int  count = 0;
+	int  input_val = 0;
+	char direction = '0';
+	
+	int curr_dial = 50;
+	int dial_count = 0;
+	
 	size_t len = strlen(input);
 	
 	for (size_t index = 0; index < len; ++index) {
 		
-		char c = input[index];
-		
-		if (c == '\n') {
+		char input_char = input[index];
+		if (input_char == '\n') {
 			
-			if (dir == 'L') {
-				if (dial == 0) {
-					--count;
+			if (direction == 'L') {
+				
+				if (curr_dial == 0) {
+					
+					--dial_count;
 				}
-				dial -= val;
-				while (dial < 0) {
-					dial += 100;
-					++count;
+				
+				curr_dial -= input_val;
+				while (curr_dial < 0) {
+					
+					curr_dial += 100;
+					++dial_count;
 				}
-				if (dial == 0) {
-					++count;
+				
+				if (curr_dial == 0) {
+					
+					++dial_count;
 				}
-			} else if (dir == 'R') {
-				dial += val;
-				while (dial >= 100) {
-					dial -= 100;
-					++count;
+			} else if (direction == 'R') {
+				
+				curr_dial += input_val;
+				while (curr_dial >= 100) {
+					
+					curr_dial -= 100;
+					++dial_count;
 				}
 			}
 			
-			val = 0;
-		} else if (c == 'L' || c == 'R') {
-			dir = c;
+			input_val = 0;
+			
+		} else if (input_char == 'L' || input_char == 'R') {
+			
+			direction = input_char;
 		} else {
-			val *= 10;
-			val += (c - '0');
+			
+			input_val *= 10;
+			input_val += (input_char - '0');
 		}
-		
 	}
+	++dial_count;
 	
-	clean_aoc(count, input);
-	return EXIT_SUCESS;
+	clean_aoc(dial_count, input);
+	return EXIT_SUCCESS;
 }
 

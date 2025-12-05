@@ -1,18 +1,11 @@
-#include <fcntl.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "helper.h"
+#include <helper.h>
 
 #define INPUT_BUF_SIZE 32 * 1024
 #define flatten_coords(row, col, width, height) ((row) * (width) + (col))
-
-enum {
-	
-	WIDTH  = 140,
-	HEIGHT = 140
-};
 
 enum {
 	
@@ -68,106 +61,62 @@ int is_free_square(char *grid, unsigned int row, unsigned int col, size_t width,
 	return (nearby_paper < TOO_MANY_ROLLS);
 }
 
-void pretty_problem(const char cell, int is_quiet) {
-	
-	if (!is_quiet) {
-		
-		putc(cell, stdout);
-	}
-}
-
 int main(int argc, char **argv) {
 	
-	int status = 0;
-	int is_quiet = 1;
+	int status = EXIT_SUCCESS;
 	
-	if (argc < 2) {
+	char *input;
+	if (init_aoc(argc, argv, &input)) {
 		
-		puts("Please provide a file.\n");
-		status = -1;
-		goto quit;
+		return status;
 	}
 	
-	if (argc >= 3) {
-		
-		is_quiet = 0;
-	}
+	int accessable_rolls = 0;
 	
-	int fd = open(argv[1], O_RDONLY, 0);
-	if (fd < 0) {
-		
-		puts("Error: could not open the file.\n");
-		status = -2;
-		goto quit;
-	}
+	size_t input_len = strlen(input);
+	char *input_copy = malloc(input_len + 1);
+	strncpy(input_copy, input, input_len);
+	input_copy[input_len] = '\0';
 	
-	char input_buf[INPUT_BUF_SIZE];
-	ssize_t read_count = read(fd, input_buf, sizeof(input_buf));
-	if (read_count < 0) {
-		
-		puts("Error: could not read from the file.\n");
-		status = -3;
-		goto close;
-	}
-	
-	char input_buf_cpy[INPUT_BUF_SIZE];
-	strncpy(input_buf_cpy, input_buf, INPUT_BUF_SIZE);
-	
-	char *line = strtok(input_buf_cpy, "\n");
+	char *line = strtok(input_copy, "\n");
 	size_t width = strlen(line);
 	size_t height = 0;
 	
-	for (;;) {
-		
-		if ((line = strtok(NULL, "\n")) == NULL) {
-			
-			break;
-		}
+	while (line != NULL) {
 		
 		++height;
+		line = strtok(NULL, "\n");
 	}
 	
 	char *grid = malloc(width * height);
 	if (grid == NULL) {
 		
-		puts("Error: could not allocate memory.");
-		status = -4;
-		goto close;
+		puts("Error: could not allocate memory for grid.");
+		status = EXIT_FAIL;
+		goto free_copy;
 	}
 	
 	for (size_t row = 0; row < height; ++row) {
 		
-		strncpy(grid + row * width, (input_buf + row * (width + 1)), height);
+		strncpy(grid + row * width, (input + row * (width + 1)), height);
 	}
 	
-	int accessable_rolls = 0;
 	for (size_t row = 0; row < height; ++row) {
 		
 		for (size_t col = 0; col < width; ++col) {
 			
 			if (is_free_square(grid, row, col, width, height)) {
 				
-				pretty_problem('x', is_quiet);
 				++accessable_rolls;
-			} else {
-				
-				pretty_problem(grid[flatten_coords(row, col, width, height)], is_quiet);
 			}
 		}
-		
-		pretty_problem('\n', is_quiet);
 	}
 	
-	puts("The answer is: ");
-	print_num(accessable_rolls);
-	puts("\n");
-	
 	free(grid);
+free_copy:
+	free(input_copy);
+	clean_aoc(accessable_rolls, input);
 	
-close:
-	close(fd);
-	
-quit:
-	return status;
+	return EXIT_SUCCESS;
 }
 
