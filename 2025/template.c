@@ -34,6 +34,7 @@ int main(int argc, char **argv) {
 	
 	puts("The answer is: ");
 	putc('\n', stdout);
+	puts("\n");
 	
 close:
 	close(fd);

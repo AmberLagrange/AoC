@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
 	
 	puts("The answer is: ");
 	print_num(accessable_rolls);
-	putc('\n', stdout);
+	puts("\n");
 	
 	free(grid);
 	

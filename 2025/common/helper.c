@@ -1,4 +1,4 @@
-#include "helper.h"
+#include <helper.h>
 
 #include <stdio.h>
 
@@ -20,7 +20,7 @@ char *reverse_str(char *str) {
 	return str;
 }
 
-char *int_to_str(u64 num, char *buf) {
+char *int_to_str(uint64_t num, char *buf) {
 	
 	if (num == 0) {
 		
@@ -28,7 +28,7 @@ char *int_to_str(u64 num, char *buf) {
 		buf[1] = '\0';
 		return buf;
 	}
-
+	
 	int i = 0;
 	
 	while (num) {
@@ -41,7 +41,7 @@ char *int_to_str(u64 num, char *buf) {
 	return buf;
 }
 
-void print_num(u64 num) {
+void print_num(uint64_t num) {
 	
 	char buf[MAX_STR_LEN];
 	int_to_str(num, buf);

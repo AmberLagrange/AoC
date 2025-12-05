@@ -1,8 +1,9 @@
 #include <fcntl.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 
-#include "helper.h"
+#include <helper.h>
 
 #define INPUT_BUF_SIZE 32 * 1024
 #define MAX_INPUT_LEN 16
@@ -60,7 +61,7 @@ int is_invalid(const char *str) {
 			}
 			
 		}
-
+		
 		if (invalid) {
 			return 1;
 		}
@@ -69,7 +70,7 @@ int is_invalid(const char *str) {
 	return 0;
 }
 
-void parse_range(const char *range, u64 *start, u64 *end) {
+void parse_range(const char *range, uint64_t *start, uint64_t *end) {
 
 	*start = 0;
 	*end   = 0;
@@ -87,19 +88,19 @@ void parse_range(const char *range, u64 *start, u64 *end) {
 	}
 }
 
-u64 check_ranges(const char *range) {
+uint64_t check_ranges(const char *range) {
 	
-	u64 start, end;
-	u64 sum = 0;
+	uint64_t start, end;
+	uint64_t sum = 0;
 	parse_range(range, &start, &end);
 
 	char buf[MAX_STR_LEN];
 
-	for (u64 i = start; i <= end; ++i) {
+	for (uint64_t index = start; index <= end; ++index) {
 		
-		if (is_invalid(int_to_str(i, buf))) {
+		if (is_invalid(int_to_str(index, buf))) {
 			
-			sum += i;
+			sum += index;
 		}
 	}
 
@@ -135,7 +136,7 @@ int main(int argc, char **argv) {
 	}
 	input_buf[file_count - 1] = '\0'; // Strip trailing newline
 	
-	u64 sum = 0;
+	uint64_t sum = 0;
 	char *range = strtok(input_buf, ",");
 	while (range != NULL) {
 		
@@ -145,7 +146,7 @@ int main(int argc, char **argv) {
 	
 	puts("The total sum is: ");
 	print_num(sum);
-	putc('\n', stdout);
+	puts("\n");
 	
 close:
 	close(fd);

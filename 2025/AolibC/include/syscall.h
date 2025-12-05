@@ -11,15 +11,15 @@ enum {
 	SYS_EXIT   = 60
 };
 
-typedef unsigned long long u64;
+typedef unsigned long long uint64_t;
 
-unsigned long __syscall_0(u64 syscall);
-unsigned long __syscall_1(u64 syscall, u64 rdi);
-unsigned long __syscall_2(u64 syscall, u64 rdi, u64 rsi);
-unsigned long __syscall_3(u64 syscall, u64 rdi, u64 rsi, u64 rdx);
-unsigned long __syscall_4(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10);
-unsigned long __syscall_5(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10, u64 r8);
-unsigned long __syscall_6(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10, u64 r8, u64 r9);
+uint64_t __syscall_0(uint64_t syscall);
+uint64_t __syscall_1(uint64_t syscall, uint64_t rdi);
+uint64_t __syscall_2(uint64_t syscall, uint64_t rdi, uint64_t rsi);
+uint64_t __syscall_3(uint64_t syscall, uint64_t rdi, uint64_t rsi, uint64_t rdx);
+uint64_t __syscall_4(uint64_t syscall, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10);
+uint64_t __syscall_5(uint64_t syscall, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8);
+uint64_t __syscall_6(uint64_t syscall, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9);
 
 #endif //SYSCALL_H
 

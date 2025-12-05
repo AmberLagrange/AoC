@@ -32,9 +32,9 @@ SRCS = $(SRC_DIR)/fcntl.c $(SRC_DIR)/mman.c $(SRC_DIR)/stack_chk_fail.c \
 	   $(SRC_DIR)/stdio.c $(SRC_DIR)/stdlib.c $(SRC_DIR)/string.c \
 	   $(SRC_DIR)/syscall.c $(SRC_DIR)/unistd.c
 
-INCS = $(INC_DIR)/fcntl.h $(INC_DIR)/mman.h $(INC_DIR)/stdio.h \
-	   $(INC_DIR)/stdlib.h $(INC_DIR)/string.h $(INC_DIR)/syscall.h \
-	   $(INC_DIR)/unistd.h
+INCS = $(INC_DIR)/fcntl.h $(INC_DIR)/mman.h $(INC_DIR)/stdint.h \
+	   $(INC_DIR)/stdio.h $(INC_DIR)/stdlib.h $(INC_DIR)/string.h \
+	   $(INC_DIR)/syscall.h $(INC_DIR)/unistd.h
 
 PCHS  = $(INCS:$(INC_DIR)/%=$(PCH_DIR)/%$(PCH_EXT))
 OBJS  = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)

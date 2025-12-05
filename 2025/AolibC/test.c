@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 	}
 	input_buf[read_count] = '\0';
 	
-	//puts(input_buf);
+	puts(input_buf);
 	free(input_buf);
 	
 close:

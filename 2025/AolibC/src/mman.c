@@ -4,11 +4,11 @@
 
 void *mmap(void *addr, size_t len, int prot, int flags, int fd, int offset) {
 	
-	return (void *)__syscall_6(SYS_MMAP, (u64)(addr), (u64)(len), (u64)(prot), (u64)(flags), (u64)(fd), (u64)(offset));
+	return (void *)__syscall_6(SYS_MMAP, (uint64_t)(addr), (uint64_t)(len), (uint64_t)(prot), (uint64_t)(flags), (uint64_t)(fd), (uint64_t)(offset));
 }
 
 int munmap(void *addr, size_t len) {
 	
-	return __syscall_2(SYS_MUNMAP, (u64)(addr), (u64)(len));
+	return __syscall_2(SYS_MUNMAP, (uint64_t)(addr), (uint64_t)(len));
 }
 

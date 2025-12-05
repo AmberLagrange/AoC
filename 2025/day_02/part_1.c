@@ -33,7 +33,7 @@ int is_valid(const char *str) {
 	return (strcmp(first_half, second_half) != 0);
 }
 
-void parse_range(const char *range, u64 *start, u64 *end) {
+void parse_range(const char *range, uint64_t *start, uint64_t *end) {
 
 	*start = 0;
 	*end   = 0;
@@ -51,19 +51,19 @@ void parse_range(const char *range, u64 *start, u64 *end) {
 	}
 }
 
-u64 check_ranges(const char *range) {
+uint64_t check_ranges(const char *range) {
 	
-	u64 start, end;
-	u64 sum = 0;
+	uint64_t start, end;
+	uint64_t sum = 0;
 	parse_range(range, &start, &end);
 
 	char buf[MAX_STR_LEN];
 
-	for (u64 i = start; i <= end; ++i) {
+	for (uint64_t index = start; index <= end; ++index) {
 		
-		if (!is_valid(int_to_str(i, buf))) {
+		if (!is_valid(int_to_str(index, buf))) {
 			
-			sum += i;
+			sum += index;
 		}
 	}
 
@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
 	}
 	input_buf[read_count - 1] = '\0'; // Strip trailing newline
 	
-	u64 sum = 0;
+	uint64_t sum = 0;
 	char *range = strtok(input_buf, ",");
 	while (range != NULL) {
 		
@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
 	
 	puts("The total sum is: ");
 	print_num(sum);
-	putc('\n', stdout);
+	puts("\n");
 	
 close:
 	close(fd);

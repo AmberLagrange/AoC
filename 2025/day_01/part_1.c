@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "helper.h"
+#include <helper.h>
 
 #define INPUT_BUF_SIZE 32 * 1024
 
@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
 	
 	puts("The password is: ");
 	print_num(count);
+	puts("\n");
 	
 close:
 	close(fd);

@@ -11,12 +11,12 @@ FILE *__files[FOPEN_MAX] = { &__stdin, &__stdout, &__stderr };
 
 int putc(int c, FILE *file) {
 	
-	return __syscall_3(SYS_WRITE, file->fd, (u64)(&c), 1);
+	return __syscall_3(SYS_WRITE, (uint64_t)(file->fd), (uint64_t)(&c), 1ULL);
 }
 
 int puts(const char *str) {
 	
 	size_t len = strlen(str);
-	return __syscall_3(SYS_WRITE, stdout->fd, (u64)(str), len);
+	return __syscall_3(SYS_WRITE, (uint64_t)(stdout->fd), (uint64_t)(str), (uint64_t)(len));
 }
 

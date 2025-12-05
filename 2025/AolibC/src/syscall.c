@@ -1,8 +1,8 @@
 #include <syscall.h>
 
-unsigned long __syscall_0(u64 syscall) {
+uint64_t __syscall_0(uint64_t syscall) {
 	
-	unsigned long ret;
+	uint64_t ret;
 	__asm__ volatile (
 		"movq %1, %%rax\n\t"
 		"syscall	   \n\t"
@@ -16,9 +16,9 @@ unsigned long __syscall_0(u64 syscall) {
 	return ret;
 }
 
-unsigned long __syscall_1(u64 syscall, u64 rdi) {
+uint64_t __syscall_1(uint64_t syscall, uint64_t rdi) {
 	
-	unsigned long ret;
+	uint64_t ret;
 	__asm__ volatile (
 		"movq %1, %%rax\n\t"
 		"movq %2, %%rdi\n\t"
@@ -34,9 +34,9 @@ unsigned long __syscall_1(u64 syscall, u64 rdi) {
 	return ret;
 }
 
-unsigned long __syscall_2(u64 syscall, u64 rdi, u64 rsi) {
+uint64_t __syscall_2(uint64_t syscall, uint64_t rdi, uint64_t rsi) {
 	
-	unsigned long ret;
+	uint64_t ret;
 	__asm__ volatile (
 		"movq %1, %%rax\n\t"
 		"movq %2, %%rdi\n\t"
@@ -54,9 +54,9 @@ unsigned long __syscall_2(u64 syscall, u64 rdi, u64 rsi) {
 	return ret;
 }
 
-unsigned long __syscall_3(u64 syscall, u64 rdi, u64 rsi, u64 rdx) {
+uint64_t __syscall_3(uint64_t syscall, uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 	
-	unsigned long ret;
+	uint64_t ret;
 	__asm__ volatile (
 		"movq %1, %%rax\n\t"
 		"movq %2, %%rdi\n\t"
@@ -76,9 +76,9 @@ unsigned long __syscall_3(u64 syscall, u64 rdi, u64 rsi, u64 rdx) {
 	return ret;
 }
 
-unsigned long __syscall_4(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10) {
+uint64_t __syscall_4(uint64_t syscall, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10) {
 	
-	unsigned long ret;
+	uint64_t ret;
 	__asm__ volatile (
 		"movq %1, %%rax\n\t"
 		"movq %2, %%rdi\n\t"
@@ -100,9 +100,10 @@ unsigned long __syscall_4(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10) {
 	return ret;
 }
 
+
+uint64_t __syscall_5(uint64_t syscall, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8) {
 	
-unsigned long __syscall_5(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10, u64 r8) {
-	unsigned long ret;
+	uint64_t ret;
 	__asm__ volatile (
 		"movq %1, %%rax\n\t"
 		"movq %2, %%rdi\n\t"
@@ -126,9 +127,9 @@ unsigned long __syscall_5(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10, u64 r
 	return ret;
 }
 
-unsigned long __syscall_6(u64 syscall, u64 rdi, u64 rsi, u64 rdx, u64 r10, u64 r8, u64 r9) {
+uint64_t __syscall_6(uint64_t syscall, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
 	
-	unsigned long ret;
+	uint64_t ret;
 	__asm__ volatile (
 		"movq %1, %%rax\n\t"
 		"movq %2, %%rdi\n\t"
