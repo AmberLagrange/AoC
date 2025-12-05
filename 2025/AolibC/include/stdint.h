@@ -24,7 +24,7 @@ typedef unsigned long long	uint64_t;
 #define UINT8_MAX	255,
 #define UINT16_MAX	65535,
 #define UINT32_MAX	4294967295LL,
-#define UINT64_MAX	18446744073709551615LL
+#define UINT64_MAX	18446744073709551615ULL
 
 #endif // STDINT_H
 
