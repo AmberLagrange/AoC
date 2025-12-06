@@ -19,6 +19,7 @@ int strcmp(const char *lhs, const char *rhs);
 char *strncpy(char *dst, const char *str, size_t count);
 
 char *strtok(char *str, const char *delims);
+char *strtok_r(char *str, const char *delims, char **state);
 
 #endif // STRING_H
 

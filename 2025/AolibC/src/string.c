@@ -120,3 +120,40 @@ char *strtok(char *str, const char *delims) {
 	return prev_str;
 }
 
+char *strtok_r(char *str, const char *delims, char **state) {
+	
+	if (str != NULL) {
+		
+		*state = str;
+	}
+	
+	if (*state == NULL) {
+		
+		return NULL;
+	}
+
+	int str_len = strlen(*state);
+	int delim_len = strlen(delims);
+	
+	char *prev_str = *state;
+	for (int i = 0; i < str_len; ++i) {
+		
+		for (int d = 0; d < delim_len; ++d) {
+			
+			if ((*state)[i] == delims[d]) {
+				
+				(*state)[i] = '\0';
+				*state = *state + i + 1;
+				return prev_str;
+			}
+		}
+	}
+	
+	if (*state != NULL) {
+		
+		*state = NULL;
+	}
+	
+	return prev_str;
+}
+
