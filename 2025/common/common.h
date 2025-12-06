@@ -13,7 +13,7 @@ enum {
 	EXIT_SUCCESS	= 0
 };
 
-// Helper functions not in libc
+// ------------------------- Helper functions not in libc ------------------------- //
 
 void swap(void *v1, void *v2);
 
@@ -25,7 +25,7 @@ void print_num(uint64_t num);
 
 void parse_range(const char *range, uint64_t *start, uint64_t *end);
 
-// Boilerplate for every day
+// ------------------------- Boilerplate for every day ------------------------- //
 
 int32_t init_aoc(int argc, char **argv, char **input);
 void clean_aoc(uint64_t answer, char *input);

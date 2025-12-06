@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-// Helper functions not in libc
+// ------------------------- Helper functions not in libc ------------------------- //
 
 void swap(void *v1, void *v2) {
 	
@@ -69,7 +69,7 @@ void parse_range(const char *range, uint64_t *start, uint64_t *end) {
 	}
 }
 
-// Boilerplate
+// ------------------------- Boilerplate ------------------------- //
 
 int32_t init_aoc(int argc, char **argv, char **input) {
 	
