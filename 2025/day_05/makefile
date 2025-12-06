@@ -15,9 +15,13 @@ part_1: part_1.c
 part_2: part_2.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -nostdlib -nostdinc -I$(INC_PATH) -I$(COMMON_PATH) part_2.c $(COMMON_SRC) $(LIBS) -o part_2
 
+run: part_1 part_2
+	./part_1 input
+	./part_2 input
+
 clean:
 	$(RM) part_1 part_2
 
 remake: clean all
 
-.PHONY: all clean remake
+.PHONY: all run clean remake

@@ -4,6 +4,7 @@
 
 extern int main(int argc, char **argv);
 extern void _init(void);
+extern void _cleanup(void);
 
 void __attribute__((naked)) _start(void) {
 	
@@ -15,8 +16,10 @@ void __attribute__((naked)) _start(void) {
 }
 
 void __start_main(int argc, char **argv) {
-
+	
 	_init();
-	exit(main(argc, argv));
+	int status = main(argc, argv);
+	_cleanup();
+	exit(status);
 }
 

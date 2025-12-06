@@ -29,7 +29,7 @@ endif
 
 INCS := $(INC_DIR)/stdlib.h
 
-SRCS := $(SRC_DIR)/start.c $(SRC_DIR)/init.c
+SRCS := $(SRC_DIR)/cleanup.c $(SRC_DIR)/init.c $(SRC_DIR)/start.c
 
 PCHS := $(INCS:$(INC_DIR)/%=$(PCH_DIR)/%$(PCH_EXT))
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)

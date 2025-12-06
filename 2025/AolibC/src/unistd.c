@@ -38,8 +38,8 @@ void *sbrk(intptr_t inc) {
 	}
 	
 	void *prev_brk = __curr_brk;
-	
-	brk((unsigned char *)(__curr_brk) + inc);
+	__curr_brk = (void *)((unsigned char *)(__curr_brk) + inc);
+	brk((unsigned char *)(__curr_brk));
 	return prev_brk;
 }
 
