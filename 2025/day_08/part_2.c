@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CONNECTIONS 10 * 1024
+#define CONNECTIONS 1000
 #define LINES 1000
 #define MAX_LINE_LEN 32
 
