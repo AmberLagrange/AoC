@@ -21,6 +21,8 @@ typedef struct junction_t {
 	uint64_t num_connections;
 	
 	struct junction_t *parent;
+	
+	int visited;
 } junction_t;
 
 junction_t *junction_create(uint64_t x, uint64_t y, uint64_t z) {
@@ -34,12 +36,11 @@ junction_t *junction_create(uint64_t x, uint64_t y, uint64_t z) {
 	box->id = global_id++;
 	
 	box->connections = malloc(sizeof(junction_t *) * CONNECTIONS);
-	for (size_t index = 0; index < CONNECTIONS; ++index) {
-		
-		box->connections[index] = NULL;
-	}
 	box->num_connections = 0;
+	
 	box->parent = box;
+	
+	box->visited = 0;
 	
 	return box;
 }
@@ -56,12 +57,12 @@ void junction_destroy(junction_t *box) {
 
 junction_t *get_root(junction_t *junction) {
 	
-	if (junction->parent == junction) {
+	while (junction != junction->parent) {
 		
-		return junction;
+		junction = junction->parent;
 	}
 	
-	return get_root(junction->parent);
+	return junction;
 }
 
 void junction_connect(junction_t *a, junction_t *b) {
@@ -69,20 +70,19 @@ void junction_connect(junction_t *a, junction_t *b) {
 	a->connections[a->num_connections++] = b;
 	b->connections[b->num_connections++] = a;
 	
-	if (a->num_connections > b->num_connections) {
+	if (a->num_connections >= b->num_connections) {
 		
-		b->parent = a;
+		get_root(b)->parent = a;
 	} else {
 		
-		a->parent = b;
+		get_root(a)->parent = b;
 	}
 }
 
 int is_connected(junction_t *a, junction_t *b) {
 	
-	return get_root(a) == get_root(b);
+	return (get_root(a) == get_root(b));
 }
-
 
 uint64_t calc_distance(junction_t *a, junction_t *b) {
 	
@@ -93,10 +93,9 @@ uint64_t calc_distance(junction_t *a, junction_t *b) {
 	return (dx * dx) + (dy * dy) + (dz * dz);
 }
 
-void connect(junction_t **boxes, junction_t **box_1, junction_t **box_2) {
+void connect_next_smallest(junction_t **boxes, junction_t **box_1, junction_t **box_2) {
 	
 	uint64_t curr_min = UINT64_MAX;
-	
 	for (size_t i = 0; i < LINES - 1; ++i) {
 		
 		for (size_t j = i + 1; j < LINES; ++j) {
@@ -122,32 +121,33 @@ void connect(junction_t **boxes, junction_t **box_1, junction_t **box_2) {
 	junction_connect(*box_1, *box_2);
 }
 
-int is_visited(junction_t *junction, junction_t **visited, uint64_t num_visited) {
+void clear_visited(junction_t *junction) {
 	
-	for (size_t index = 0; index < num_visited; ++index) {
+	if (!junction->visited) {
 		
-		if (visited[index] == junction) {
-			
-			return 1;
-		}
+		return;
 	}
 	
-	return 0;
+	junction->visited = 0;
+	for (size_t index = 0; index < junction->num_connections; ++index) {
+		
+		clear_visited(junction->connections[index]);
+	}
 }
 
-uint64_t calc_total_connected(junction_t *junction, junction_t **visited, uint64_t *num_visited) {
+uint64_t calc_total_connected(junction_t *junction) {
 	
-	if (is_visited(junction, visited, *num_visited)) {
+	if (junction->visited) {
 		
 		return 0;
 	}
 	
+	junction->visited = 1;
+	
 	uint64_t total_connected = 1;
-	visited[(*num_visited)++] = junction;
-
 	for (uint64_t index = 0; index < junction->num_connections; ++index) {
 		
-		total_connected += calc_total_connected(junction->connections[index], visited, num_visited);
+		total_connected += calc_total_connected(junction->connections[index]);
 	}
 	
 	return total_connected;
@@ -195,17 +195,19 @@ int main(int argc, char **argv) {
 	junction_t *last_1;
 	junction_t *last_2;
 	
-	junction_t *visited[LINES];
 	uint64_t total_connected = 0;
-	while (total_connected != LINES) {
+	while (total_connected < LINES) {
 		
-		for (size_t index = 0; index < LINES; ++index) {
-			visited[index] = NULL;
-		}
+		connect_next_smallest(boxes, &last_1, &last_2);
+		total_connected = calc_total_connected(boxes[0]);
+		clear_visited(boxes[0]);
+	}
+	
+	if (total_connected != LINES) {
 		
-		connect(boxes, &last_1, &last_2);
-		uint64_t num_visited = 0;
-		total_connected = calc_total_connected(boxes[0], visited, &num_visited);
+		puts("Error: total_connected is bigger than the number of junction boxes.\n");
+		clean_aoc(UINT64_MAX, input);
+		return EXIT_FAIL;
 	}
 	
 	uint64_t prod = last_1->x * last_2->x;
@@ -215,7 +217,7 @@ int main(int argc, char **argv) {
 		
 		junction_destroy(boxes[index]);
 	}
-
+	
 	clean_aoc(prod, input);
 	return EXIT_SUCCESS;
 }
