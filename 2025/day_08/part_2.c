@@ -9,12 +9,18 @@
 #define LINES 1000
 #define MAX_LINE_LEN 32
 
+static uint64_t precalced_distances[LINES][LINES];
+static uint32_t global_id;
+
 typedef struct junction_t {
 	
 	uint32_t x, y, z;
+	uint32_t id;
 	
 	struct junction_t **connections;
 	uint64_t num_connections;
+	
+	struct junction_t *parent;
 } junction_t;
 
 junction_t *junction_create(uint64_t x, uint64_t y, uint64_t z) {
@@ -25,12 +31,15 @@ junction_t *junction_create(uint64_t x, uint64_t y, uint64_t z) {
 	box->y = y;
 	box->z = z;
 	
+	box->id = global_id++;
+	
 	box->connections = malloc(sizeof(junction_t *) * CONNECTIONS);
 	for (size_t index = 0; index < CONNECTIONS; ++index) {
 		
 		box->connections[index] = NULL;
 	}
 	box->num_connections = 0;
+	box->parent = box;
 	
 	return box;
 }
@@ -45,24 +54,35 @@ void junction_destroy(junction_t *box) {
 	free(box);
 }
 
+junction_t *get_root(junction_t *junction) {
+	
+	if (junction->parent == junction) {
+		
+		return junction;
+	}
+	
+	return get_root(junction->parent);
+}
+
 void junction_connect(junction_t *a, junction_t *b) {
 	
 	a->connections[a->num_connections++] = b;
 	b->connections[b->num_connections++] = a;
+	
+	if (a->num_connections > b->num_connections) {
+		
+		b->parent = a;
+	} else {
+		
+		a->parent = b;
+	}
 }
 
 int is_connected(junction_t *a, junction_t *b) {
 	
-	for (size_t index = 0; index < a->num_connections; ++index) {
-		
-		if (a->connections[index] == b) {
-			
-			return 1;
-		}
-	}
-	
-	return 0;
+	return get_root(a) == get_root(b);
 }
+
 
 uint64_t calc_distance(junction_t *a, junction_t *b) {
 	
@@ -81,7 +101,7 @@ void connect(junction_t **boxes, junction_t **box_1, junction_t **box_2) {
 		
 		for (size_t j = i + 1; j < LINES; ++j) {
 			
-			uint64_t distance = calc_distance(boxes[i], boxes[j]);
+			uint64_t distance = precalced_distances[boxes[i]->id][boxes[j]->id];
 			
 			if (distance >= curr_min) {
 				
@@ -160,6 +180,16 @@ int main(int argc, char **argv) {
 		boxes[line_num++] = junction_create(x, y, z);
 		
 		line = strtok(NULL, "\n");
+	}
+	
+	for (size_t outer_index = 0; outer_index < LINES; ++outer_index) {
+		
+		for (size_t inner_index = outer_index + 1; inner_index < LINES; ++inner_index) {
+			
+			junction_t *box_1 = boxes[inner_index];
+			junction_t *box_2 = boxes[outer_index];
+			precalced_distances[box_1->id][box_2->id] = precalced_distances[box_2->id][box_1->id] = calc_distance(box_1, box_2);
+		}
 	}
 	
 	junction_t *last_1;
