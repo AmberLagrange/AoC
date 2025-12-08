@@ -7,7 +7,6 @@ TMP_DIR   ?= $(CURDIR)/tmp
 LIB_DIR   ?= $(CURDIR)/../lib
 
 START_MAIN = start_main
-TMP_FILE   = $(TMP_DIR)/$(*F).$$$$
 
 SILENT_FLAG = $(findstring s, $(word 1, $(MAKEFLAGS)))
 
@@ -20,11 +19,11 @@ endif
 ifeq ($(CC), clang)
 	PCH_EXT        := .pch
 	PCH_COMP_FLAGS := -Xclang -static-define
-	PCH_INC_FLAGS  := $(foreach PCH, $(PCHS), -include-pch $(PCH))
+	PCH_FLAGS  := $(foreach PCH, $(PCHS), -include-pch $(PCH))
 else
 	PCH_EXT        := .gch
 	PCH_COMP_FLAGS :=
-	PCH_INC_FLAGS  := $(foreach PCH, $(PCHS), -include $(PCH))
+	PCH_FLAGS  := $(foreach PCH, $(PCHS), -include $(PCH))
 endif
 
 INCS := $(INC_DIR)/stdlib.h
@@ -35,7 +34,7 @@ PCHS := $(INCS:$(INC_DIR)/%=$(PCH_DIR)/%$(PCH_EXT))
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 DEPS := $(SRCS:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
-all: dirs pchs $(LIB_DIR)/$(START_MAIN).a
+all: $(LIB_DIR)/$(START_MAIN).a
 
 dirs:
 	mkdir -p $(BUILD_DIR)
@@ -53,25 +52,27 @@ clean:
 	$(RM) -r $(TMP_DIR)
 	$(RM)    $(LIB_DIR)/$(START_MAIN).a
 
-remake: clean all
+remake:
+	$(MAKE) clean
+	$(MAKE) all
 
-$(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/%
+$(PCH_DIR)/%$(PCH_EXT): $(INC_DIR)/% | dirs
 	set -e; \
 	$(RM) $(DEP_DIR)/$(*F).d; \
-	$(CC) $(CFLAGS) -fPIC $(PCH_COMP_FLAGS) -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ > $(TMP_FILE); \
-	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $(TMP_FILE) > $(DEP_DIR)/$(*F).d; \
-	$(RM) $(TMP_FILE)
+	$(CC) $(CFLAGS) -fPIC $(PCH_COMP_FLAGS) -nostdlib -nostdinc -x c-header -MD -MP -MT $@ -MF - -I$(INC_DIR) -c $< -o $@ 1> $(TMP_DIR)/$(*F).$$$$ 2>&1; \
+	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d#' < $(TMP_DIR)/$(*F).$$$$ > $(DEP_DIR)/$(*F).d; \
+	$(RM) $(TMP_DIR)/$(*F).$$$$
 	@printf '$(*F)$(PCH_EXT) Created.\n' $(OUTPUT_REDIRECT)
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | dirs
 	set -e; \
 	$(RM) $(DEP_DIR)/$(*F).d; \
-	$(CC) $(CFLAGS) -fPIC --static -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ > $(TMP_FILE); \
-	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $(TMP_FILE) > $(DEP_DIR)/$(*F).d; \
-	$(RM) $(TMP_FILE)
+	$(CC) $(CFLAGS) -fPIC -nostdlib -nostdinc -MD -MP -MT $@ -MF - $(PCH_FLAGS) -I$(INC_DIR) -c $< -o $@ 1> $(TMP_DIR)/$(*F).$$$$ 2>&1; \
+	sed -e 's#$@:#$@ $(DEP_DIR)/$(*F).d:#' < $(TMP_DIR)/$(*F).$$$$ > $(DEP_DIR)/$(*F).d; \
+	$(RM) $(TMP_DIR)/$(*F).$$$$
 	@printf '$(*F).o created.\n' $(OUTPUT_REDIRECT)
 
-$(LIB_DIR)/$(START_MAIN).a: $(OBJS)
+$(LIB_DIR)/$(START_MAIN).a: $(OBJS) | dirs
 	$(AR) rcs $@ $(OBJS)
 	@printf '$(START_MAIN).a created.\n' $(OUTPUT_REDIRECT)
 

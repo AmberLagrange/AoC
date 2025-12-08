@@ -22,6 +22,8 @@ run: part_1 part_2
 clean:
 	$(RM) part_1 part_2
 
-remake: clean all
+remake:
+	$(MAKE) clean
+	$(MAKE) all
 
 .PHONY: all run clean remake
