@@ -10,6 +10,16 @@
 
 enum {
 	
+	UP		= 0,
+	RIGHT	= 1,
+	DOWN	= 2,
+	LEFT	= 3
+};
+
+#define flatten_coords(row, col, width) ((row) * (width) + (col))
+
+enum {
+	
 	RED   = '#',
 	GREEN = 'X',
 	OTHER = '.'
@@ -39,34 +49,34 @@ uint32_t calc_area(const coords_t corner_1, const coords_t corner_2) {
 	return (uint32_t)(dx * dy);
 }
 
-void fill_interior(char **grid, uint32_t width, uint32_t height) {
+void fill_interior(char *grid, uint32_t width, uint32_t height) {
 	
 	for (size_t row = 0; row < height; ++row) {
 		
 		int is_inside = 0;
 		for (size_t col = 0; col < width; ++col) {
 			
-			if (grid[row][col] == RED) {
+			if (grid[flatten_coords(row, col, width)] == RED) {
 				
 				continue;
 			}
 			
-			if ((grid[row][col] == GREEN) &&
+			if ((grid[flatten_coords(row, col, width)] == GREEN) &&
 				(col != width - 1) &&
-				(grid[row][col + 1] != GREEN)) {
+				(grid[flatten_coords(row, col + 1, width)] != GREEN)) {
 				
 				is_inside = !is_inside;
 			}
 			
 			if (is_inside) {
 				
-				grid[row][col] = GREEN;
+				grid[flatten_coords(row, col, width)] = GREEN;
 			}
 		}
 	}
 }
 
-void fill_between_coords(char **grid, coords_t coord_1, coords_t coord_2) {
+void fill_between_coords(char *grid, uint32_t width, coords_t coord_1, coords_t coord_2) {
 	
 	if (coord_1.x == coord_2.x) {
 		
@@ -75,7 +85,7 @@ void fill_between_coords(char **grid, coords_t coord_1, coords_t coord_2) {
 		
 		for (size_t index = start_y + 1; index < end_y; ++index) {
 			
-			grid[index - 1][coord_1.x - 1] = GREEN;
+			grid[flatten_coords(index, coord_1.x, width)] = GREEN;
 		}
 	} else {
 		
@@ -84,12 +94,12 @@ void fill_between_coords(char **grid, coords_t coord_1, coords_t coord_2) {
 		
 		for (size_t index = start_x + 1; index < end_x; ++index) {
 			
-			grid[coord_1.y - 1][index - 1] = GREEN;
+			grid[flatten_coords(coord_1.y, index, width)] = GREEN;
 		}
 	}
 }
 
-int is_valid(char **grid, coords_t coord_1, coords_t coord_2) {
+int is_valid(char *grid, uint32_t width, coords_t coord_1, coords_t coord_2) {
 	
 	uint32_t min_x = (coord_1.x < coord_2.x) ? coord_1.x : coord_2.x;
 	uint32_t max_x = (coord_1.x > coord_2.x) ? coord_1.x : coord_2.x;
@@ -99,12 +109,12 @@ int is_valid(char **grid, coords_t coord_1, coords_t coord_2) {
 	
 	for (size_t row = min_y; row < max_y; ++row) {
 		
-		if (grid[row - 1][min_x - 1] == OTHER) {
+		if (grid[flatten_coords(row, min_x, width)] == OTHER) {
 			
 			return 0;
 		}
 		
-		if (grid[row - 1][max_x - 1] == OTHER) {
+		if (grid[flatten_coords(row, max_x, width)] == OTHER) {
 			
 			return 0;
 		}
@@ -112,12 +122,12 @@ int is_valid(char **grid, coords_t coord_1, coords_t coord_2) {
 	
 	for (size_t col = min_x; col < max_x; ++col) {
 		
-		if (grid[min_y - 1][col - 1] == OTHER) {
+		if (grid[flatten_coords(min_y, col, width)] == OTHER) {
 			
 			return 0;
 		}
 		
-		if (grid[max_y - 1][col - 1] == OTHER) {
+		if (grid[flatten_coords(max_y, col, width)] == OTHER) {
 			
 			return 0;
 		}
@@ -126,42 +136,43 @@ int is_valid(char **grid, coords_t coord_1, coords_t coord_2) {
 	return 1;
 }
 
-void init_grid(char **grid, uint32_t width, uint32_t height, coords_t *coords_list, size_t coords_len) {
+void init_grid(char *grid, uint32_t width, uint32_t height, coords_t *coords_list, size_t coords_len) {
 	
 	for (size_t row = 0; row < height; ++row) {
 		
-		grid[row] = malloc(width + 1);
 		for (size_t col = 0; col < width; ++col) {
 			
-			grid[row][col] = OTHER;
+			grid[flatten_coords(row, col, width)] = OTHER;
 		}
-		grid[row][width] = '\0';
 	}
 	
 	coords_t tile, prev_tile;
 	
 	tile = coords_list[0];
-	grid[tile.y - 1][tile.x - 1] = RED;
+	grid[flatten_coords(tile.y, tile.x, width)] = RED;
 
 	prev_tile = coords_list[coords_len - 1];
-	fill_between_coords(grid, tile, prev_tile);
+	fill_between_coords(grid, width, tile, prev_tile);
 	
 	for (size_t index = 1; index < coords_len; ++index) {
 		
 		prev_tile = tile;
 		tile = coords_list[index];
-		grid[tile.y - 1][tile.x - 1] = RED;
-		fill_between_coords(grid, tile, prev_tile);
+		grid[flatten_coords(tile.y, tile.x, width)] = RED;
+		fill_between_coords(grid, width, tile, prev_tile);
 	}
 	
 	fill_interior(grid, width, height);
 }
 
-void print_grid(char **grid, uint32_t height) {
+void print_grid(char *grid, uint32_t width, uint32_t height) {
 	
-	for (size_t index = 0; index < height; ++index) {
+	for (size_t row = 0; row < height; ++row) {
 		
-		puts(grid[index]);
+		for (size_t col = 0; col < width; ++col) {
+			
+			putc(grid[flatten_coords(row, col, width)], stdout);
+		}
 		puts("\n");
 	}
 }
@@ -176,6 +187,10 @@ int main(int argc, char **argv) {
 	
 	coords_t coords_list[LINES];
 	size_t line_num = 0;
+	
+	uint32_t min_x = UINT32_MAX;
+	uint32_t min_y = UINT32_MAX;
+	
 	uint32_t max_x = 0;
 	uint32_t max_y = 0;
 	
@@ -195,13 +210,25 @@ int main(int argc, char **argv) {
 		max_x = (in_x > max_x) ? in_x : max_x;
 		max_y = (in_y > max_y) ? in_y : max_y;
 		
+		min_x = (in_x < min_x) ? in_x : min_x;
+		min_y = (in_y < min_y) ? in_y : min_y;
+		
 		++line_num;
 		line = strtok(NULL, "\n");
 	}
 	
-	char **grid = malloc(sizeof(char *) * max_y);
-	init_grid(grid, max_x, max_y, coords_list, LINES);
-	//print_grid(grid, max_y);
+	for (size_t index = 0; index < LINES; ++index) {
+		
+		coords_list[index].x -= min_x;
+		coords_list[index].y -= min_y;
+	}
+	
+	uint32_t height = max_y - min_y + 1;
+	uint32_t width = max_x - min_x + 1;
+	
+	char *grid = malloc(width * height);
+	init_grid(grid, width, height, coords_list, LINES);
+	//print_grid(grid, width, height);
 	
 	uint32_t max_area = 0;
 	for (size_t outer_index = 0; outer_index < line_num; ++outer_index) {
@@ -211,7 +238,7 @@ int main(int argc, char **argv) {
 			coords_t coord_1 = coords_list[outer_index];
 			coords_t coord_2 = coords_list[inner_index];
 			
-			if (!is_valid(grid, coord_1, coord_2)) {
+			if (!is_valid(grid, width, coord_1, coord_2)) {
 				
 				continue;
 			}
@@ -221,12 +248,7 @@ int main(int argc, char **argv) {
 		}
 	}
 	
-	for (size_t index = 0; index < max_y; ++index) {
-		
-		free(grid[index]);
-	}
 	free(grid);
-	
 	free(state);
 	clean_aoc(max_area, input);
 	return EXIT_SUCCESS;
